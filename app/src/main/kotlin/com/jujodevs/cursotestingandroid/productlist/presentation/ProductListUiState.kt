@@ -1,6 +1,7 @@
 package com.jujodevs.cursotestingandroid.productlist.presentation
 
 import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 
 sealed interface ProductListUiState {
     data object Loading: ProductListUiState
@@ -9,6 +10,6 @@ sealed interface ProductListUiState {
         val products: List<Product>,
         val categories: List <String>,
         val selectedCategory: String?,
-        // sortOption
+        val sortOption: SortOption,
     ): ProductListUiState
 }

@@ -62,8 +62,8 @@ fun ProductListScreen(
                     ) {
                         FiltersMenu(
                             state = state,
-                            onCategorySelected = { category ->
-                                productListViewModel.onAction(ProductListAction.SetCategory(category))
+                            onAction = { action ->
+                                productListViewModel.onAction(action)
                             }
                         )
                         LazyColumn {

@@ -2,6 +2,7 @@ package com.jujodevs.cursotestingandroid.productlist.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,6 +44,7 @@ class ProductListViewModel @Inject constructor(
                         products = products,
                         categories = categories,
                         selectedCategory = null,
+                        sortOption = SortOption.NONE,
                     )
                 }
             }
@@ -55,10 +57,17 @@ class ProductListViewModel @Inject constructor(
     fun onAction(action: ProductListAction) {
         when(action) {
             is ProductListAction.SetCategory -> setCategory(action.category)
+            is ProductListAction.SetOrderSelected -> setSortedOption(action.sortOption)
         }
     }
 
     private fun setCategory(category: String?) {
+        viewModelScope.launch {
+            // Llamar a setting repository
+        }
+    }
+
+    private fun setSortedOption(sortOption: SortOption) {
         viewModelScope.launch {
             // Llamar a setting repository
         }

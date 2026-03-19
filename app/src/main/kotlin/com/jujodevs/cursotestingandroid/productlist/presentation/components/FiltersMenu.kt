@@ -10,21 +10,29 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
+import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListUiState
 
 @Composable
 fun FiltersMenu(
     modifier: Modifier = Modifier,
     state: ProductListUiState.Success,
-    onCategorySelected: (String?) -> Unit,
+    onAction: (ProductListAction) -> Unit,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
@@ -33,12 +41,14 @@ fun FiltersMenu(
         ) {
             Text("Categorías")
             Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
                     selected = state.selectedCategory == null,
-                    onClick = { onCategorySelected(null) },
+                    onClick = { onAction(ProductListAction.SetCategory(null)) },
                     label = { Text(
                         text = "Todas",
                         style = MaterialTheme.typography.labelSmall
@@ -50,7 +60,7 @@ fun FiltersMenu(
                             other = state.selectedCategory,
                             ignoreCase = true
                         ),
-                        onClick = { onCategorySelected(category) },
+                        onClick = { onAction(ProductListAction.SetCategory(category)) },
                         label = { Text(
                             text = category,
                             style = MaterialTheme.typography.labelSmall
@@ -58,6 +68,55 @@ fun FiltersMenu(
                     )
                 }
             }
+
+            HorizontalDivider()
+
+            Text("Ordenar por")
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OrderFilterChip(
+                    text = "Precio ↑",
+                    sortOption = SortOption.PRICE_ASC,
+                    currentSortOption = state.sortOption,
+                    onAction = onAction,
+                    modifier = Modifier.weight(1f),
+                )
+                OrderFilterChip(
+                    text = "Precio ↓",
+                    sortOption = SortOption.PRICE_DESC,
+                    currentSortOption = state.sortOption,
+                    onAction = onAction,
+                    modifier = Modifier.weight(1f),
+                )
+                OrderFilterChip(
+                    text = "Descuento",
+                    sortOption = SortOption.DISCOUNT,
+                    currentSortOption = state.sortOption,
+                    onAction = onAction,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
+}
+
+@Composable
+fun OrderFilterChip(
+    text: String,
+    sortOption: SortOption,
+    currentSortOption: SortOption,
+    onAction: (ProductListAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FilterChip(
+        selected = currentSortOption == sortOption,
+        onClick = { onAction(ProductListAction.SetOrderSelected(
+            if (sortOption == currentSortOption) SortOption.NONE else sortOption
+        )) },
+        label = { Text(text = text, style = MaterialTheme.typography.labelSmall) },
+        modifier = modifier,
+    )
 }
