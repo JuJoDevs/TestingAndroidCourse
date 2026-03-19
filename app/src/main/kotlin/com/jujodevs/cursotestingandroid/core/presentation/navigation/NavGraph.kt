@@ -8,13 +8,14 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListScreen
 
 @Composable
 fun NavGraph(modifier: Modifier = Modifier) {
     val backStack = rememberNavBackStack(Screen.ProductList)
     val entries = entryProvider<NavKey> {
         entry<Screen.ProductList> {
-            Text("ProductList", fontSize = 30.sp)
+            ProductListScreen()
         }
         entry<Screen.Cart> {
             Text("Cart", fontSize = 30.sp)
