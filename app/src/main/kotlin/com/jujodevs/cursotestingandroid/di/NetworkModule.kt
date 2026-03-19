@@ -24,7 +24,7 @@ object NetworkModule {
     @Singleton
     @Named("baseUrl")
     fun provideBaseUrl(): String {
-        return "https://raw.githubusercontent.com/ArisGuimera/minimarket-api/main"
+        return "https://raw.githubusercontent.com/ArisGuimera/minimarket-api/main/"
     }
 
     @Provides
