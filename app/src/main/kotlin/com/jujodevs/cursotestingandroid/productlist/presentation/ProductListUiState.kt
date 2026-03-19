@@ -7,8 +7,8 @@ sealed interface ProductListUiState {
     data class Error(val message: String): ProductListUiState
     data class Success(
         val products: List<Product>,
-        // categories: List <>,
-        // val selectedCategory: String,
+        val categories: List <String>,
+        val selectedCategory: String?,
         // sortOption
     ): ProductListUiState
 }

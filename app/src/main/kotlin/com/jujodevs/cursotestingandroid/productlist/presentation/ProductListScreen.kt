@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
+import com.jujodevs.cursotestingandroid.productlist.presentation.components.FiltersMenu
 
 @Composable
 fun ProductListScreen(
@@ -48,7 +49,7 @@ fun ProductListScreen(
             modifier = Modifier.fillMaxSize().padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            when(val uiState = uiState) {
+            when(val state = uiState) {
                 ProductListUiState.Loading -> {
                     CircularProgressIndicator()
                 }
@@ -59,8 +60,14 @@ fun ProductListScreen(
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
+                        FiltersMenu(
+                            state = state,
+                            onCategorySelected = { category ->
+                                productListViewModel.onAction(ProductListAction.SetCategory(category))
+                            }
+                        )
                         LazyColumn {
-                            items(uiState.products) { product ->
+                            items(state.products) { product ->
                                 Box(
                                     modifier = Modifier.fillMaxWidth()
                                         .height(50.dp)

@@ -13,12 +13,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -36,11 +37,30 @@ class ProductListViewModel @Inject constructor(
                 _uiState.update { ProductListUiState.Loading }
             }
             .onEach { products ->
-                _uiState.update { ProductListUiState.Success(products = products) }
+                val categories = products.map { product -> product.category }.distinct().sorted()
+                _uiState.update {
+                    ProductListUiState.Success(
+                        products = products,
+                        categories = categories,
+                        selectedCategory = null,
+                    )
+                }
             }
             .catch { e ->
                 _uiState.update { ProductListUiState.Error(e.message.orEmpty()) }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun onAction(action: ProductListAction) {
+        when(action) {
+            is ProductListAction.SetCategory -> setCategory(action.category)
+        }
+    }
+
+    private fun setCategory(category: String?) {
+        viewModelScope.launch {
+            // Llamar a setting repository
+        }
     }
 }
