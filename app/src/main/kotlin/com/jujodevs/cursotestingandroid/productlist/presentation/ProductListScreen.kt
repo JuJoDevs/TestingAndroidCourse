@@ -1,5 +1,6 @@
 package com.jujodevs.cursotestingandroid.productlist.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,17 +26,19 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.FiltersMenu
+import com.jujodevs.cursotestingandroid.productlist.presentation.components.HomeTopAppBar
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.ProductItem
 
 @Composable
 fun ProductListScreen(
-    productListViewModel: ProductListViewModel = hiltViewModel()
+    productListViewModel: ProductListViewModel = hiltViewModel(),
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
+    val filtersVisible by productListViewModel.filtersVisible.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveAsEvents(productListViewModel.events) { event ->
-        when(event) {
+        when (event) {
             is ProductListEvent.ShowMessage -> {
                 snackbarHostState.showSnackbar(event.message)
             }
@@ -43,35 +46,47 @@ fun ProductListScreen(
     }
 
     Scaffold(
-       snackbarHost = { SnackbarHost(snackbarHostState) }
+        topBar = { HomeTopAppBar(
+            filtersVisible = filtersVisible,
+            onAction = productListViewModel::onAction
+        ) },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            when(val state = uiState) {
+            when (val state = uiState) {
                 ProductListUiState.Loading -> {
                     CircularProgressIndicator()
                 }
+
                 is ProductListUiState.Error -> {
-                    Text(text = "ERROR", fontSize = 30.sp, color = Color.Red)
+                    Text(
+                        text = "ERROR",
+                        fontSize = 30.sp,
+                        color = Color.Red
+                    )
                 }
+
                 is ProductListUiState.Success -> {
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        FiltersMenu(
-                            state = state,
-                            onAction = { action ->
-                                productListViewModel.onAction(action)
-                            }
-                        )
+                        AnimatedVisibility(filtersVisible) {
+                            FiltersMenu(
+                                state = state,
+                                onAction = productListViewModel::onAction
+                            )
+                        }
 
                         Text(
                             text = "${state.products.size} productos",
                             modifier = Modifier.padding(
                                 horizontal = 16.dp,
-                                vertical = 4.dp
+                                vertical = 8.dp
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
@@ -101,7 +116,9 @@ fun ProductListScreen(
                         } else {
                             LazyColumn {
                                 items(state.products) { product ->
-                                    ProductItem(product = product, onClick = {})
+                                    ProductItem(
+                                        product = product,
+                                        onClick = {})
                                 }
                             }
                         }

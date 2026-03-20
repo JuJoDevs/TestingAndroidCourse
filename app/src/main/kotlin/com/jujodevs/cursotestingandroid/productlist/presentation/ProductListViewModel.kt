@@ -28,6 +28,9 @@ class ProductListViewModel @Inject constructor(
     private val _events = MutableSharedFlow<ProductListEvent>(extraBufferCapacity = 1)
     val events = _events.asSharedFlow()
 
+    private val _filtersVisible = MutableStateFlow(false)
+    val filtersVisible = _filtersVisible.asStateFlow()
+
     init {
         loadProducts()
     }
@@ -58,6 +61,8 @@ class ProductListViewModel @Inject constructor(
         when(action) {
             is ProductListAction.SetCategory -> setCategory(action.category)
             is ProductListAction.SetOrderSelected -> setSortedOption(action.sortOption)
+            ProductListAction.NavToSettings -> TODO()
+            is ProductListAction.SetFiltersVisible -> setFiltersVisible(action.showFilters)
         }
     }
 
@@ -71,5 +76,9 @@ class ProductListViewModel @Inject constructor(
         viewModelScope.launch {
             // Llamar a setting repository
         }
+    }
+
+    private fun setFiltersVisible(showFilters: Boolean) {
+        _filtersVisible.update { showFilters }
     }
 }
