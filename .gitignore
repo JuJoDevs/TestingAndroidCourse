@@ -33,3 +33,6 @@ app/google-services.json
 # Android Profiling
 *.hprof
 /app/release/app-release.aab
+
+# Generated Gradle
+gradle/gradle-daemon-jvm.properties

@@ -8,7 +8,9 @@ import com.jujodevs.cursotestingandroid.productlist.data.local.database.MiniMark
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.ProductDao
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.PromotionDao
 import com.jujodevs.cursotestingandroid.productlist.data.repository.ProductRepositoryImpl
+import com.jujodevs.cursotestingandroid.productlist.data.repository.PromotionRepositoryImpl
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
+import com.jujodevs.cursotestingandroid.productlist.domain.repository.PromotionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,4 +52,10 @@ object DataModule {
     fun providesProductRepository(
         productRepositoryImpl: ProductRepositoryImpl
     ): ProductRepository = productRepositoryImpl
+
+    @Provides
+    @Singleton
+    fun providesPromotionRepository(
+        promotionRepositoryImpl: PromotionRepositoryImpl
+    ): PromotionRepository = promotionRepositoryImpl
 }

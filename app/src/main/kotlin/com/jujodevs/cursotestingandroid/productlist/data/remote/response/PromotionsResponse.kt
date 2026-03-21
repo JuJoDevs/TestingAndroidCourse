@@ -22,7 +22,7 @@ data class PromotionResponse(
     @SerialName("buyX")
     val buyX: Int? = null,
     @SerialName("payX")
-    val payX: Int? = null,
+    val payY: Int? = null,
     @SerialName("startAtEpoch")
     val startAtEpoch: Long? = null,
     @SerialName("endAtEpoch")
