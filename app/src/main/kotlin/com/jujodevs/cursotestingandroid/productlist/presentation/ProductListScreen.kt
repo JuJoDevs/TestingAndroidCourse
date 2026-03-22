@@ -115,10 +115,11 @@ fun ProductListScreen(
                             }
                         } else {
                             LazyColumn {
-                                items(state.products) { product ->
+                                items(state.products) { item ->
                                     ProductItem(
-                                        product = product,
-                                        onClick = {})
+                                        item = item,
+                                        onClick = {}
+                                    )
                                 }
                             }
                         }

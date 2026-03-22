@@ -4,7 +4,7 @@ import java.time.Instant
 
 enum class PromotionType {
     PERCENT,
-    BY_X_PAY_Y,
+    BUY_X_PAY_Y,
 }
 
 data class Promotion(

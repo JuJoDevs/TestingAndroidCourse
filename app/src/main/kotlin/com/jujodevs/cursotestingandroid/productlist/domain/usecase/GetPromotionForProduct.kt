@@ -21,12 +21,17 @@ class GetPromotionForProduct @Inject constructor() {
         return if (percentPromos != null) {
             val percent = percentPromos.value.coerceIn(0.0, 100.0)
             val discountedPrice = (product.price * (1 - percent / 100.0)).roundTo2Decimals()
-            ProductPromotion.Percent(percent = percent, discountedPrice = discountedPrice)
+            val label = "-${percent.toInt()}%"
+            ProductPromotion.Percent(
+                percent = percent,
+                discountedPrice = discountedPrice,
+                label = label,
+            )
         } else {
 
             val buyPayPromo = productPromos
                 .filter { promo ->
-                    promo.type == PromotionType.BY_X_PAY_Y && (promo.buyQuantity ?: 0) > 0
+                    promo.type == PromotionType.BUY_X_PAY_Y && (promo.buyQuantity ?: 0) > 0
                 }
                 .minByOrNull { promo -> promo.value }
 

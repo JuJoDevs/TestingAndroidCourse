@@ -18,7 +18,7 @@ fun PromotionEntity.toDomain(json: Json): Promotion? {
     else {
         val finalPrice = when(finalType) {
             PromotionType.PERCENT -> percent
-            PromotionType.BY_X_PAY_Y -> payY
+            PromotionType.BUY_X_PAY_Y -> payY
         }?.toDouble()
 
         if (finalPrice == null) null

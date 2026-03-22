@@ -41,7 +41,7 @@ class ProductListViewModel @Inject constructor(
                 _uiState.update { ProductListUiState.Loading }
             }
             .onEach { products ->
-                val categories = products.map { product -> product.category }.distinct().sorted()
+                val categories = products.map { product -> product.product.category }.distinct().sorted()
                 _uiState.update {
                     ProductListUiState.Success(
                         products = products,

@@ -21,7 +21,7 @@ data class PromotionResponse(
     val percent: Int? = null,
     @SerialName("buyX")
     val buyX: Int? = null,
-    @SerialName("payX")
+    @SerialName("payY")
     val payY: Int? = null,
     @SerialName("startAtEpoch")
     val startAtEpoch: Long? = null,
