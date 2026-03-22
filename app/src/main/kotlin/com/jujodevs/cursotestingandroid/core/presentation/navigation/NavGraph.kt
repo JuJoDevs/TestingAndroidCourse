@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.jujodevs.cursotestingandroid.detail.presentation.ProductDetailScreen
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListScreen
 import com.jujodevs.cursotestingandroid.settings.presentation.SettingsScreen
 
@@ -30,7 +31,10 @@ fun NavGraph() {
             )
         }
         entry<Screen.ProductDetail> {
-            Text("ProductDetail", fontSize = 30.sp)
+            ProductDetailScreen(
+                productId = "p1",
+                onBack = { backStack.removeLastOrNull() }
+            )
         }
     }
     NavDisplay(

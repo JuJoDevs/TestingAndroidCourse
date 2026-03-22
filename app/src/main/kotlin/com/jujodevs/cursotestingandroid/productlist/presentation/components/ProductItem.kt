@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +33,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import java.util.Locale
@@ -53,7 +50,7 @@ fun ProductItem(
         is ProductPromotion.Percent -> promotion.label
         null -> null
     }
-    var error by rememberSaveable { mutableStateOf(false) }
+    var loadImageSuccess by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
@@ -79,18 +76,19 @@ fun ProductItem(
                     .clip(RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                val imageModifier = if (error) Modifier.size(48.dp) else Modifier.matchParentSize()
                 AsyncImage(
                     model = product.imageUrl,
-                    error = rememberVectorPainter(image = Icons.Outlined.Image),
+                    placeholder = rememberVectorPainter(Icons.Default.Image),
+                    error = rememberVectorPainter(Icons.Default.BrokenImage),
                     contentDescription = product.name,
                     contentScale = ContentScale.Crop,
-                    modifier = imageModifier,
+                    modifier = Modifier.matchParentSize(),
                     colorFilter =
-                        if (error) ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-                        else null,
-                    onLoading = { error = false },
-                    onError = { error = true },
+                        if (loadImageSuccess) null
+                        else ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                    onLoading = { loadImageSuccess = false },
+                    onSuccess = { loadImageSuccess = true },
+                    onError = { loadImageSuccess = false },
                 )
 
                 if (promoBadge != null) {
