@@ -25,19 +25,26 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jujodevs.cursotestingandroid.core.domain.model.ThemeMode
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
 import com.jujodevs.cursotestingandroid.ui.theme.CursoTestingAndroidTheme
 
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
+    val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             MarketTopAppBar(
@@ -47,7 +54,10 @@ fun SettingsScreen(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Card(
@@ -80,8 +90,10 @@ fun SettingsScreen(
                     SwitchableOptionRow(
                         title = "Solo productos en Stock",
                         description = "Muestra únicamente productos disponibles",
-                        checked = true,
-                        onCheckedChange = { }
+                        checked = uiState.inStockOnly,
+                        onCheckedChange = { newState ->
+                            settingsViewModel.onAction(SettingsAction.SetInStockOnly(newState))
+                        }
                     )
 
                     HorizontalDivider()
@@ -142,21 +154,42 @@ fun SettingsScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             SegmentedButton(
-                                shape = SegmentedButtonDefaults.itemShape(0, 3),
-                                onClick = {  },
-                                selected = true,
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    0,
+                                    3
+                                ),
+                                onClick = {
+                                    settingsViewModel.onAction(
+                                        SettingsAction.SetThemeMode(ThemeMode.SYSTEM)
+                                    )
+                                },
+                                selected = uiState.themeMode == ThemeMode.SYSTEM,
                                 label = { Text("Sistema") }
                             )
                             SegmentedButton(
-                                shape = SegmentedButtonDefaults.itemShape(1, 3),
-                                onClick = {  },
-                                selected = false,
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    1,
+                                    3
+                                ),
+                                onClick = {
+                                    settingsViewModel.onAction(
+                                        SettingsAction.SetThemeMode(ThemeMode.LIGHT)
+                                    )
+                                },
+                                selected = uiState.themeMode == ThemeMode.LIGHT,
                                 label = { Text("Claro") }
                             )
                             SegmentedButton(
-                                shape = SegmentedButtonDefaults.itemShape(2, 3),
-                                onClick = {  },
-                                selected = false,
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    2,
+                                    3
+                                ),
+                                onClick = {
+                                    settingsViewModel.onAction(
+                                        SettingsAction.SetThemeMode(ThemeMode.DARK)
+                                    )
+                                },
+                                selected = uiState.themeMode == ThemeMode.DARK,
                                 label = { Text("Oscuro") }
                             )
                         }
