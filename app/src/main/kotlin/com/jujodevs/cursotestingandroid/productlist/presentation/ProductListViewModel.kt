@@ -105,8 +105,14 @@ class ProductListViewModel @Inject constructor(
         when (action) {
             is ProductListAction.SetCategory -> setCategory(action.category)
             is ProductListAction.SetOrderSelected -> setSortedOption(action.sortOption)
-            ProductListAction.NavToSettings -> TODO()
+            ProductListAction.NavToSettings -> navigateToSettings()
             is ProductListAction.SetFiltersVisible -> setFiltersVisible(action.showFilters)
+        }
+    }
+
+    private fun navigateToSettings() {
+        viewModelScope.launch {
+            _events.tryEmit(ProductListEvent.NavigateToSettings)
         }
     }
 

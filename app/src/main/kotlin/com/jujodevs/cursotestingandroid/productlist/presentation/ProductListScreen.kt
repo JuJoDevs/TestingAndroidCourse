@@ -32,6 +32,7 @@ import com.jujodevs.cursotestingandroid.productlist.presentation.components.Prod
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
+    navigateToSettings: () -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
@@ -42,6 +43,7 @@ fun ProductListScreen(
             is ProductListEvent.ShowMessage -> {
                 snackbarHostState.showSnackbar(event.message)
             }
+            ProductListEvent.NavigateToSettings -> navigateToSettings()
         }
     }
 
