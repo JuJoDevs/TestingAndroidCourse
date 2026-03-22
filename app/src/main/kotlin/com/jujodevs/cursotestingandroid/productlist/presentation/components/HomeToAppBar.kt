@@ -19,7 +19,7 @@ import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListActi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
-    filtersVisible: Boolean,
+    filterVisible: Boolean,
     onAction: (ProductListAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -39,14 +39,14 @@ fun HomeTopAppBar(
         ),
         actions = {
             IconButton(
-                onClick = { onAction(ProductListAction.SetFiltersVisible(!filtersVisible)) }
+                onClick = { onAction(ProductListAction.SetFiltersVisible(!filterVisible)) }
             ) {
                 Icon(
                     imageVector =
-                        if (filtersVisible) Icons.Default.FilterListOff
+                        if (filterVisible) Icons.Default.FilterListOff
                         else Icons.Default.FilterList,
                     contentDescription =
-                        if (filtersVisible) "Ocultar filtros"
+                        if (filterVisible) "Ocultar filtros"
                         else "Mostrar filtros",
                 )
             }

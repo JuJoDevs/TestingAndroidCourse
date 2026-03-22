@@ -26,6 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -45,7 +48,7 @@ fun ProductItem(
 ) {
     val product = item.product
     val promotion = item.promotion
-    val promoBadge = when(promotion) {
+    val promoBadge = when (promotion) {
         is ProductPromotion.BuyXPayY -> promotion.label
         is ProductPromotion.Percent -> promotion.label
         null -> null
@@ -55,7 +58,10 @@ fun ProductItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            )
             .clickable { onClick(item) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(12.dp),
@@ -73,21 +79,19 @@ fun ProductItem(
                     .clip(RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                if (!product.imageUrl.isNullOrBlank() && !error) {
-                    AsyncImage(
-                        model = product.imageUrl,
-                        contentDescription = product.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.matchParentSize(),
-                        onError = { error = true }
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Image,
-                        contentDescription = product.name,
-                        modifier = Modifier.size(33.dp),
-                    )
-                }
+                val imageModifier = if (error) Modifier.size(48.dp) else Modifier.matchParentSize()
+                AsyncImage(
+                    model = product.imageUrl,
+                    error = rememberVectorPainter(image = Icons.Outlined.Image),
+                    contentDescription = product.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = imageModifier,
+                    colorFilter =
+                        if (error) ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                        else null,
+                    onLoading = { error = false },
+                    onError = { error = true },
+                )
 
                 if (promoBadge != null) {
                     Box(
@@ -98,7 +102,10 @@ fun ProductItem(
                                 color = MaterialTheme.colorScheme.error,
                                 shape = RoundedCornerShape(4.dp)
                             )
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .padding(
+                                horizontal = 6.dp,
+                                vertical = 2.dp
+                            )
                     ) {
                         Text(
                             text = promoBadge,
@@ -150,7 +157,11 @@ fun ProductItem(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 Text(
-                                    text = String.format(Locale.getDefault(), "%.2f", product.price),
+                                    text = String.format(
+                                        Locale.getDefault(),
+                                        "%.2f",
+                                        product.price
+                                    ),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     textDecoration = TextDecoration.LineThrough,
@@ -166,7 +177,11 @@ fun ProductItem(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 Text(
-                                    text = String.format(Locale.getDefault(), "%.2f", promotion.discountedPrice),
+                                    text = String.format(
+                                        Locale.getDefault(),
+                                        "%.2f",
+                                        promotion.discountedPrice
+                                    ),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
@@ -175,7 +190,11 @@ fun ProductItem(
                         }
                     } else {
                         Text(
-                            text = String.format(Locale.getDefault(), "%.2f", product.price),
+                            text = String.format(
+                                Locale.getDefault(),
+                                "%.2f",
+                                product.price
+                            ),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                         )

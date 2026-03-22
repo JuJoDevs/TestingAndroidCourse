@@ -34,7 +34,7 @@ fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
-    val filtersVisible by productListViewModel.filtersVisible.collectAsStateWithLifecycle()
+    val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveAsEvents(productListViewModel.events) { event ->
@@ -47,7 +47,7 @@ fun ProductListScreen(
 
     Scaffold(
         topBar = { HomeTopAppBar(
-            filtersVisible = filtersVisible,
+            filterVisible = filterVisible,
             onAction = productListViewModel::onAction
         ) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -75,7 +75,7 @@ fun ProductListScreen(
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        AnimatedVisibility(filtersVisible) {
+                        AnimatedVisibility(filterVisible) {
                             FiltersMenu(
                                 state = state,
                                 onAction = productListViewModel::onAction
