@@ -10,7 +10,7 @@ import com.jujodevs.cursotestingandroid.cart.data.local.database.entity.CartItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CartItemDao {
+interface CartDao {
     @Query("SELECT * FROM cart_items")
     fun getAllCartItems(): Flow<List<CartItemEntity>>
 

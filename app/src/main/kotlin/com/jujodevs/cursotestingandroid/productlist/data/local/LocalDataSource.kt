@@ -1,6 +1,6 @@
 package com.jujodevs.cursotestingandroid.productlist.data.local
 
-import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartItemDao
+import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartDao
 import com.jujodevs.cursotestingandroid.cart.data.local.database.entity.CartItemEntity
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.ProductDao
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.PromotionDao
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class LocalDataSource @Inject constructor(
     private val productDao: ProductDao,
     private val promotionDao: PromotionDao,
-    private val cartItemDao: CartItemDao,
+    private val cartDao: CartDao,
 ) {
     fun getAllProducts(): Flow<List<ProductEntity>> = productDao.getAllProducts()
 
@@ -29,14 +29,14 @@ class LocalDataSource @Inject constructor(
         promotionDao.replaceAll(promotions)
     }
 
-    fun getAllCartItems(): Flow<List<CartItemEntity>> = cartItemDao.getAllCartItems()
+    fun getAllCartItems(): Flow<List<CartItemEntity>> = cartDao.getAllCartItems()
 
     suspend fun getCartItemById(productId: String): CartItemEntity? =
-        cartItemDao.getCartItemById(productId)
+        cartDao.getCartItemById(productId)
 
     suspend fun insertCartItem(cartItemEntity: CartItemEntity): Result<Unit> =
         try {
-            cartItemDao.insertCartItem(cartItemEntity)
+            cartDao.insertCartItem(cartItemEntity)
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -46,7 +46,7 @@ class LocalDataSource @Inject constructor(
 
     suspend fun updateCartItem(cartItemEntity: CartItemEntity): Result<Unit> =
         try {
-            cartItemDao.updateCartItem(cartItemEntity)
+            cartDao.updateCartItem(cartItemEntity)
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -56,7 +56,7 @@ class LocalDataSource @Inject constructor(
 
     suspend fun deleteCartItem(cartItemEntity: CartItemEntity): Result<Unit> =
         try {
-            cartItemDao.deleteCartItem(cartItemEntity)
+            cartDao.deleteCartItem(cartItemEntity)
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -64,9 +64,9 @@ class LocalDataSource @Inject constructor(
             Result.failure(e)
         }
 
-    suspend fun clearCart(cartItemEntity: CartItemEntity): Result<Unit> =
+    suspend fun clearCart(): Result<Unit> =
         try {
-            cartItemDao.clearCart()
+            cartDao.clearCart()
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e

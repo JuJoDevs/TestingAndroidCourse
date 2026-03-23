@@ -5,7 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartItemDao
+import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartDao
+import com.jujodevs.cursotestingandroid.cart.data.repository.CartRepositoryImpl
+import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
 import com.jujodevs.cursotestingandroid.core.data.coroutines.DefaultDispatchersProvider
 import com.jujodevs.cursotestingandroid.core.domain.coroutines.DispatchersProvider
 import com.jujodevs.cursotestingandroid.core.data.local.database.MiniMarketDatabase
@@ -46,8 +48,8 @@ object DataModule {
     }
 
     @Provides
-    fun providesCartItemDao(database: MiniMarketDatabase): CartItemDao {
-        return database.cartItemDao()
+    fun providesCartDao(database: MiniMarketDatabase): CartDao {
+        return database.cartDao()
     }
 
     @Provides
@@ -71,6 +73,12 @@ object DataModule {
     fun providesPromotionRepository(
         promotionRepositoryImpl: PromotionRepositoryImpl
     ): PromotionRepository = promotionRepositoryImpl
+
+    @Provides
+    @Singleton
+    fun providesCartRepository(
+        cartRepositoryImpl: CartRepositoryImpl
+    ): CartRepository = cartRepositoryImpl
 
     @Provides
     @Singleton
