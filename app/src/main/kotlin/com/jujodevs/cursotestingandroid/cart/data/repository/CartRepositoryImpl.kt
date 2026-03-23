@@ -6,7 +6,9 @@ import com.jujodevs.cursotestingandroid.cart.domain.model.CartItem
 import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
 import com.jujodevs.cursotestingandroid.core.domain.model.AppError
 import com.jujodevs.cursotestingandroid.productlist.data.local.LocalDataSource
+import com.jujodevs.cursotestingandroid.productlist.data.mappers.toDomain
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -46,5 +48,9 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun clearCart() {
         localDataSource.clearCart()
+    }
+
+    override suspend fun getCartItemById(productId: String): CartItem? {
+        return localDataSource.getCartItemById(productId)?.toDomain()
     }
 }
