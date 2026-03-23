@@ -5,9 +5,10 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartItemDao
 import com.jujodevs.cursotestingandroid.core.data.coroutines.DefaultDispatchersProvider
 import com.jujodevs.cursotestingandroid.core.domain.coroutines.DispatchersProvider
-import com.jujodevs.cursotestingandroid.productlist.data.local.database.MiniMarketDatabase
+import com.jujodevs.cursotestingandroid.core.data.local.database.MiniMarketDatabase
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.ProductDao
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.PromotionDao
 import com.jujodevs.cursotestingandroid.productlist.data.repository.ProductRepositoryImpl
@@ -42,6 +43,11 @@ object DataModule {
     @Provides
     fun providesPromotionDao(database: MiniMarketDatabase): PromotionDao {
         return database.promotionDao()
+    }
+
+    @Provides
+    fun providesCartItemDao(database: MiniMarketDatabase): CartItemDao {
+        return database.cartItemDao()
     }
 
     @Provides
