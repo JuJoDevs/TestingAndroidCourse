@@ -105,14 +105,9 @@ class ProductListViewModel @Inject constructor(
         when (action) {
             is ProductListAction.SetCategory -> setCategory(action.category)
             is ProductListAction.SetOrderSelected -> setSortedOption(action.sortOption)
-            ProductListAction.NavToSettings -> navigateToSettings()
             is ProductListAction.SetFiltersVisible -> setFiltersVisible(action.showFilters)
-        }
-    }
-
-    private fun navigateToSettings() {
-        viewModelScope.launch {
-            _events.tryEmit(ProductListEvent.NavigateToSettings)
+            ProductListAction.NavToSettings -> navigateToSettings()
+            is ProductListAction.NavToProductDetail -> navigateToProductDetail(action.product)
         }
     }
 
@@ -131,6 +126,18 @@ class ProductListViewModel @Inject constructor(
     private fun setFiltersVisible(showFilters: Boolean) {
         viewModelScope.launch {
             settingsRepository.setFiltersVisible(showFilters)
+        }
+    }
+
+    private fun navigateToSettings() {
+        viewModelScope.launch {
+            _events.tryEmit(ProductListEvent.NavigateToSettings)
+        }
+    }
+
+    private fun navigateToProductDetail(product: ProductWithPromotion) {
+        viewModelScope.launch {
+            _events.tryEmit(ProductListEvent.NavigateToProductDetail(product.product.id))
         }
     }
 }

@@ -33,6 +33,7 @@ import com.jujodevs.cursotestingandroid.productlist.presentation.components.Prod
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit,
+    navigateToProductDetail: (String) -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
@@ -43,15 +44,19 @@ fun ProductListScreen(
             is ProductListEvent.ShowMessage -> {
                 snackbarHostState.showSnackbar(event.message)
             }
+
             ProductListEvent.NavigateToSettings -> navigateToSettings()
+            is ProductListEvent.NavigateToProductDetail -> navigateToProductDetail(event.productId)
         }
     }
 
     Scaffold(
-        topBar = { HomeTopAppBar(
-            filterVisible = filterVisible,
-            onAction = productListViewModel::onAction
-        ) },
+        topBar = {
+            HomeTopAppBar(
+                filterVisible = filterVisible,
+                onAction = productListViewModel::onAction
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(
@@ -120,7 +125,11 @@ fun ProductListScreen(
                                 items(state.products) { item ->
                                     ProductItem(
                                         item = item,
-                                        onClick = {}
+                                        onClick = {
+                                            productListViewModel.onAction(
+                                                ProductListAction.NavToProductDetail(item)
+                                            )
+                                        }
                                     )
                                 }
                             }

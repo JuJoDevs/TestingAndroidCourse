@@ -17,9 +17,8 @@ fun NavGraph() {
     val entries = entryProvider<NavKey> {
         entry<Screen.ProductList> {
             ProductListScreen(
-                navigateToSettings = {
-                    backStack.add(Screen.Settings)
-                }
+                navigateToSettings = { backStack.add(Screen.Settings) },
+                navigateToProductDetail = { backStack.add(Screen.ProductDetail(it)) }
             )
         }
         entry<Screen.Cart> {
@@ -30,9 +29,9 @@ fun NavGraph() {
                 onBack = { backStack.removeLastOrNull() }
             )
         }
-        entry<Screen.ProductDetail> {
+        entry<Screen.ProductDetail> { route ->
             ProductDetailScreen(
-                productId = "p1",
+                productId = route.productId,
                 onBack = { backStack.removeLastOrNull() }
             )
         }

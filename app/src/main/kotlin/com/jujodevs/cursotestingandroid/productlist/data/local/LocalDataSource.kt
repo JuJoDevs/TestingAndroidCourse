@@ -13,6 +13,8 @@ class LocalDataSource @Inject constructor(
 ) {
     fun getAllProducts(): Flow<List<ProductEntity>> = productDao.getAllProducts()
 
+    fun getProductById(id: String): Flow<ProductEntity?> = productDao.getProductById(id)
+
     suspend fun saveProducts(products: List<ProductEntity>) {
         productDao.replaceAll(products)
     }
