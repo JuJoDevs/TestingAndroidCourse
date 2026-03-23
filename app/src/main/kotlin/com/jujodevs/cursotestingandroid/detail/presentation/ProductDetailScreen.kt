@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,6 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
+import com.jujodevs.cursotestingandroid.detail.presentation.components.AddToCartButton
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 
 @Composable
@@ -58,14 +60,19 @@ fun ProductDetailScreen(
             )
         },
         bottomBar = {
-
+            BottomAppBar {
+                AddToCartButton(
+                    product = uiState.item?.product,
+                    isLoading = uiState.isLoading,
+                    addToCart = { productDetailViewModel.onAction(ProductDetailAction.AddToCart) }
+                )
+            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
         ) {
             if (uiState.isLoading) {
                 Box(
@@ -87,12 +94,13 @@ fun ProductDetailScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
+                            .verticalScroll(rememberScrollState())
+                            .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Column(
@@ -128,7 +136,9 @@ fun ProductDetailScreen(
                                     )
                                 }
 
-                                Text(product.description)
+                                if (product.description.isNotBlank()) {
+                                    Text(product.description)
+                                }
 
                                 HorizontalDivider()
 
@@ -195,9 +205,12 @@ fun ProductDetailScreen(
                                 HorizontalDivider()
 
                                 val hasStock = product.stock > 0
-                                val colorStock =
+                                val stockBackgroundColor =
                                     if (hasStock) MaterialTheme.colorScheme.onPrimaryContainer
                                     else MaterialTheme.colorScheme.onErrorContainer
+                                val stockTextColor =
+                                    if (hasStock) MaterialTheme.colorScheme.primaryContainer
+                                    else MaterialTheme.colorScheme.errorContainer
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -207,12 +220,12 @@ fun ProductDetailScreen(
                                     Text(
                                         text = "Stock disponible",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.surfaceVariant
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
 
                                     Surface(
                                         shape = RoundedCornerShape(12.dp),
-                                        color = colorStock,
+                                        color = stockBackgroundColor,
                                     ) {
                                         Text(
                                             text =
@@ -225,7 +238,7 @@ fun ProductDetailScreen(
                                                 ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold,
-                                            color = colorStock,
+                                            color = stockTextColor,
                                         )
                                     }
                                 }
