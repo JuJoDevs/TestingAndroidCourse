@@ -14,6 +14,7 @@ class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
     private val getPromotionForProduct: GetPromotionForProduct,
+    private val groupPromotionsByProductId: GroupPromotionsByProductId,
     private val settingsRepository: SettingsRepository,
 ) {
     operator fun invoke(): Flow<List<ProductWithPromotion>> {
@@ -22,7 +23,7 @@ class GetProductsUseCase @Inject constructor(
             promotionRepository.getActivePromotions(),
             settingsRepository.inStockOnly,
         ) { products, promotions, inStockOnly ->
-            val promotions = promotions.getActivePromotions().getPromotionsByProductId()
+            val promotions = groupPromotionsByProductId(promotions.getActivePromotions())
 
             val filteredProducts = if (inStockOnly) {
                 products.filter { it.stock > 0 }
@@ -43,16 +44,5 @@ class GetProductsUseCase @Inject constructor(
         return this.filter { promotion ->
             promotion.startTime <= now && promotion.endTime >= now
         }
-    }
-
-    private fun List<Promotion>.getPromotionsByProductId(): Map<String, List<Promotion>> {
-        val mapPromotion = mutableMapOf<String, List<Promotion>>()
-        forEach { promotion ->
-            promotion.productsIds.forEach { productId ->
-                mapPromotion[productId] =
-                    mapPromotion.getOrDefault(productId, emptyList()) + promotion
-            }
-        }
-        return mapPromotion
     }
 }

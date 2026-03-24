@@ -8,6 +8,7 @@ import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.P
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.PromotionEntity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(
@@ -18,6 +19,11 @@ class LocalDataSource @Inject constructor(
     fun getAllProducts(): Flow<List<ProductEntity>> = productDao.getAllProducts()
 
     fun getProductById(id: String): Flow<ProductEntity?> = productDao.getProductById(id)
+
+    fun getProductsById(productIds: Set<String>): Flow<List<ProductEntity>> {
+        return if (productIds.isEmpty()) flowOf(emptyList())
+        else productDao.getProductsById(productIds.toList())
+    }
 
     suspend fun saveProducts(products: List<ProductEntity>) {
         productDao.replaceAll(products)
