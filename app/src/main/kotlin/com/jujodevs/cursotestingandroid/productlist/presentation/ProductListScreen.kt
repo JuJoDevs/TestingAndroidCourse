@@ -146,7 +146,8 @@ fun ProductListScreen(
                                             productListViewModel.onAction(
                                                 ProductListAction.NavToProductDetail(item)
                                             )
-                                        }
+                                        },
+                                        modifier = Modifier.animateItem()
                                     )
                                 }
                             }
