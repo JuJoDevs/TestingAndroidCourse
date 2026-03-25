@@ -68,7 +68,10 @@ class ProductDetailViewModel @Inject constructor(
     private fun addToCart() {
         val product = _uiState.value.item?.product?.id ?: return
         viewModelScope.launch {
-            safeRunCatching { addToCartUseCase(product) }
+            safeRunCatching {
+                addToCartUseCase(product)
+                _events.emit(ProductDetailEvent.SuccessAddToCart)
+            }
                 .onFailure { e ->
                     if (e is AppError) handleError(e)
                     else handleError(UnknownError(e.message))

@@ -68,6 +68,10 @@ fun ProductDetailScreen(
             ProductDetailEvent.UnknownError -> {
                 snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
             }
+
+            ProductDetailEvent.SuccessAddToCart -> {
+                snackbarHostState.showSnackbar("Producto añadido al carrito")
+            }
         }
     }
 
