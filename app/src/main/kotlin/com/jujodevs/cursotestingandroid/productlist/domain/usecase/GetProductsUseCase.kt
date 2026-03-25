@@ -17,9 +17,10 @@ class GetProductsUseCase @Inject constructor(
     private val groupPromotionsByProductId: GroupPromotionsByProductId,
     private val settingsRepository: SettingsRepository,
 ) {
-    operator fun invoke(): Flow<List<ProductWithPromotion>> {
+    operator fun invoke(ids: Set<String> = emptySet()): Flow<List<ProductWithPromotion>> {
         return combine(
-            productRepository.getProducts(),
+            if (ids.isEmpty()) productRepository.getProducts()
+            else productRepository.getProductsById(ids),
             promotionRepository.getActivePromotions(),
             settingsRepository.inStockOnly,
         ) { products, promotions, inStockOnly ->

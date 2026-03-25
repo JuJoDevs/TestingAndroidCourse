@@ -108,6 +108,7 @@ class ProductListViewModel @Inject constructor(
             is ProductListAction.SetFiltersVisible -> setFiltersVisible(action.showFilters)
             ProductListAction.NavToSettings -> navigateToSettings()
             is ProductListAction.NavToProductDetail -> navigateToProductDetail(action.product)
+            ProductListAction.NavToCart -> navigateToCart()
         }
     }
 
@@ -138,6 +139,12 @@ class ProductListViewModel @Inject constructor(
     private fun navigateToProductDetail(product: ProductWithPromotion) {
         viewModelScope.launch {
             _events.tryEmit(ProductListEvent.NavigateToProductDetail(product.product.id))
+        }
+    }
+
+    private fun navigateToCart() {
+        viewModelScope.launch {
+            _events.tryEmit(ProductListEvent.NavigateToCart)
         }
     }
 }

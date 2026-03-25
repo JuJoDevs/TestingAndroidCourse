@@ -9,4 +9,5 @@ sealed interface ProductListAction {
     data class SetFiltersVisible(val showFilters: Boolean): ProductListAction
     data object NavToSettings: ProductListAction
     data class NavToProductDetail(val product: ProductWithPromotion): ProductListAction
+    data object NavToCart: ProductListAction
 }

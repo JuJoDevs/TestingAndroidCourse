@@ -34,6 +34,7 @@ fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     navigateToSettings: () -> Unit,
     navigateToProductDetail: (String) -> Unit,
+    navigateToCart: () -> Unit,
 ) {
     val uiState by productListViewModel.uiState.collectAsStateWithLifecycle()
     val filterVisible by productListViewModel.filterVisible.collectAsStateWithLifecycle()
@@ -47,6 +48,7 @@ fun ProductListScreen(
 
             ProductListEvent.NavigateToSettings -> navigateToSettings()
             is ProductListEvent.NavigateToProductDetail -> navigateToProductDetail(event.productId)
+            ProductListEvent.NavigateToCart -> navigateToCart()
         }
     }
 

@@ -7,7 +7,7 @@ import com.jujodevs.cursotestingandroid.cart.domain.usecase.GetCartSummaryUseCas
 import com.jujodevs.cursotestingandroid.cart.domain.usecase.UpdateCartItemUseCase
 import com.jujodevs.cursotestingandroid.cart.presentation.model.CartItemWithPromotion
 import com.jujodevs.cursotestingandroid.core.domain.safeRunCatching
-import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
+import com.jujodevs.cursotestingandroid.productlist.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -29,9 +28,9 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
     private val getCartSummaryUseCase: GetCartSummaryUseCase,
     private val updateCartItemUseCase: UpdateCartItemUseCase,
+    private val getProductsUseCase: GetProductsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CartUiState>(CartUiState.Loading)
@@ -65,14 +64,14 @@ class CartViewModel @Inject constructor(
                     }
                 } else {
                     combine(
-                        productRepository.getProductsById(ids),
+                        getProductsUseCase(ids),
                         getCartSummaryUseCase()
                     ) { products, summary ->
-                        val productsById = products.associateBy { it.id }
+                        val productsById = products.associateBy { it.product.id }
                         val cartItemsWithProducts = cartItems.mapNotNull { cartItem ->
                             productsById[cartItem.productId]?.let { product ->
                                 CartItemWithPromotion(
-                                    product = product,
+                                    productWithPromotion = product,
                                     cartItem = cartItem
                                 )
                             }
@@ -89,21 +88,29 @@ class CartViewModel @Inject constructor(
                 }
             }
             .catch { e ->
-                _events.emit(CartEvent.ShowMessage(e.message.orEmpty()))
+                _uiState.update { CartUiState.Error(e.message.orEmpty()) }
             }
             .launchIn(viewModelScope)
     }
 
     fun onAction(action: CartAction) {
         when (action) {
+            CartAction.LoadCart -> loadCart()
             is CartAction.UpdateCartItem -> updateCartItem(
                 productId = action.productId,
                 quantity = action.quantity
             )
 
             is CartAction.RemoveFromCart -> removeFromCart(action.productId)
-            is CartAction.IncreaseQuantity -> increaseQuantity(action.productId, action.currentQuantity)
-            is CartAction.DecreaseQuantity -> decreaseQuantity(action.productId, action.currentQuantity)
+            is CartAction.IncreaseQuantity -> increaseQuantity(
+                action.productId,
+                action.currentQuantity
+            )
+
+            is CartAction.DecreaseQuantity -> decreaseQuantity(
+                action.productId,
+                action.currentQuantity
+            )
         }
     }
 
@@ -113,7 +120,7 @@ class CartViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             safeRunCatching {
-                cartRepository.updateQuantity(
+                updateCartItemUseCase(
                     productId = productId,
                     quantity = quantity
                 )
@@ -137,13 +144,25 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun increaseQuantity(productId: String, currentQuantity: Int) {
-        updateCartItem(productId, currentQuantity + 1)
+    fun increaseQuantity(
+        productId: String,
+        currentQuantity: Int,
+    ) {
+        updateCartItem(
+            productId,
+            currentQuantity + 1
+        )
     }
 
-    fun decreaseQuantity(productId: String, currentQuantity: Int) {
+    fun decreaseQuantity(
+        productId: String,
+        currentQuantity: Int,
+    ) {
         if (currentQuantity > 1) {
-            updateCartItem(productId, currentQuantity - 1)
+            updateCartItem(
+                productId,
+                currentQuantity - 1
+            )
         } else {
             removeFromCart(productId)
         }
