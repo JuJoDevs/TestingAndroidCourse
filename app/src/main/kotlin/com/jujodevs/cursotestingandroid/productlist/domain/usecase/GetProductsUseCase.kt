@@ -1,5 +1,6 @@
 package com.jujodevs.cursotestingandroid.productlist.domain.usecase
 
+import com.jujodevs.cursotestingandroid.cart.domain.ex.activeAt
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.Promotion
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
@@ -17,14 +18,14 @@ class GetProductsUseCase @Inject constructor(
     private val groupPromotionsByProductId: GroupPromotionsByProductId,
     private val settingsRepository: SettingsRepository,
 ) {
-    operator fun invoke(ids: Set<String> = emptySet()): Flow<List<ProductWithPromotion>> {
+    operator fun invoke(): Flow<List<ProductWithPromotion>> {
         return combine(
-            if (ids.isEmpty()) productRepository.getProducts()
-            else productRepository.getProductsById(ids),
+            productRepository.getProducts(),
             promotionRepository.getActivePromotions(),
             settingsRepository.inStockOnly,
         ) { products, promotions, inStockOnly ->
-            val promotions = groupPromotionsByProductId(promotions.getActivePromotions())
+            val now = Instant.now()
+            val promotions = groupPromotionsByProductId(promotions.activeAt(now))
 
             val filteredProducts = if (inStockOnly) {
                 products.filter { it.stock > 0 }
@@ -32,18 +33,10 @@ class GetProductsUseCase @Inject constructor(
                 products
             }
 
-
             filteredProducts.map { product ->
                 val promotion = getPromotionForProduct(product, promotions)
                 ProductWithPromotion(product = product, promotion = promotion)
             }
-        }
-    }
-
-    private fun List<Promotion>.getActivePromotions(): List<Promotion> {
-        val now = Instant.now()
-        return this.filter { promotion ->
-            promotion.startTime <= now && promotion.endTime >= now
         }
     }
 }

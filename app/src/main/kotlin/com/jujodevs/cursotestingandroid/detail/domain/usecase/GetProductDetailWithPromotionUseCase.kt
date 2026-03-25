@@ -1,5 +1,6 @@
 package com.jujodevs.cursotestingandroid.detail.domain.usecase
 
+import com.jujodevs.cursotestingandroid.cart.domain.ex.activeAt
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.PromotionRepository
@@ -21,9 +22,7 @@ class GetProductDetailWithPromotionUseCase @Inject constructor(
             promotionRepository.getActivePromotions(),
         ) { product, promotions ->
             val now = Instant.now()
-            val activePromotions = promotions.filter {
-                it.startTime <= now && it.endTime >= now && it.productsIds.contains(productId)
-            }
+            val activePromotions = promotions.activeAt(now)
 
             product?.let {
                 val finalPromotion = getPromotionForProduct(product, mapOf(productId to activePromotions))

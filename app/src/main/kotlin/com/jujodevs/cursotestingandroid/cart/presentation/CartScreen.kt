@@ -184,8 +184,8 @@ fun CartItemCard(
     onAction: (CartAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val product = itemWithProduct.productWithPromotion.product
-    val promotion = itemWithProduct.productWithPromotion.promotion
+    val product = itemWithProduct.item.product
+    val promotion = itemWithProduct.item.promotion
     val cartItem = itemWithProduct.cartItem
 
     val currencyFormatter = remember {

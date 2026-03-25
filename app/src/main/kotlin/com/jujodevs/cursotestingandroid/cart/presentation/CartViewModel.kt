@@ -3,11 +3,10 @@ package com.jujodevs.cursotestingandroid.cart.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
+import com.jujodevs.cursotestingandroid.cart.domain.usecase.GetCartItemWithPromotionUseCase
 import com.jujodevs.cursotestingandroid.cart.domain.usecase.GetCartSummaryUseCase
 import com.jujodevs.cursotestingandroid.cart.domain.usecase.UpdateCartItemUseCase
-import com.jujodevs.cursotestingandroid.cart.presentation.model.CartItemWithPromotion
 import com.jujodevs.cursotestingandroid.core.domain.safeRunCatching
-import com.jujodevs.cursotestingandroid.productlist.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -17,9 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +27,7 @@ class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
     private val getCartSummaryUseCase: GetCartSummaryUseCase,
     private val updateCartItemUseCase: UpdateCartItemUseCase,
-    private val getProductsUseCase: GetProductsUseCase,
+    private val getCartItemWithPromotionUseCase: GetCartItemWithPromotionUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CartUiState>(CartUiState.Loading)
@@ -49,44 +46,18 @@ class CartViewModel @Inject constructor(
         _uiState.value = CartUiState.Loading
         cartJob?.cancel()
 
-        cartJob = cartRepository.getCartItems()
-            .flatMapLatest { cartItems ->
-                val ids = cartItems.mapTo(mutableSetOf()) { it.productId }
-                if (ids.isEmpty()) {
-                    getCartSummaryUseCase().map { summary ->
-                        _uiState.update {
-                            CartUiState.Success(
-                                summary = summary,
-                                cartItems = emptyList(),
-                                isLoading = false
-                            )
-                        }
-                    }
-                } else {
-                    combine(
-                        getProductsUseCase(ids),
-                        getCartSummaryUseCase()
-                    ) { products, summary ->
-                        val productsById = products.associateBy { it.product.id }
-                        val cartItemsWithProducts = cartItems.mapNotNull { cartItem ->
-                            productsById[cartItem.productId]?.let { product ->
-                                CartItemWithPromotion(
-                                    productWithPromotion = product,
-                                    cartItem = cartItem
-                                )
-                            }
-                        }
-
-                        _uiState.update {
-                            CartUiState.Success(
-                                summary = summary,
-                                cartItems = cartItemsWithProducts,
-                                isLoading = false
-                            )
-                        }
-                    }
-                }
+        cartJob = combine(
+            getCartItemWithPromotionUseCase(),
+            getCartSummaryUseCase()
+        ) { cartItemWithPromotions, summary ->
+            _uiState.update {
+                CartUiState.Success(
+                    summary = summary,
+                    cartItems = cartItemWithPromotions,
+                    isLoading = false
+                )
             }
+        }
             .catch { e ->
                 _uiState.update { CartUiState.Error(e.message.orEmpty()) }
             }

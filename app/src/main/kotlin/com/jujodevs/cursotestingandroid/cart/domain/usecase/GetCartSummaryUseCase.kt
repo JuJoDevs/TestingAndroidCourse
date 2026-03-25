@@ -1,5 +1,6 @@
 package com.jujodevs.cursotestingandroid.cart.domain.usecase
 
+import com.jujodevs.cursotestingandroid.cart.domain.ex.activeAt
 import com.jujodevs.cursotestingandroid.cart.domain.model.CartItem
 import com.jujodevs.cursotestingandroid.cart.domain.model.CartSummary
 import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
@@ -59,9 +60,7 @@ class GetCartSummaryUseCase @Inject constructor(
         promotions: List<Promotion>,
     ): CartSummary {
         val now = Instant.now()
-        val activePromotions = groupPromotionsByProductId(promotions.filter {
-            it.startTime <= now && it.endTime >= now
-        })
+        val activePromotions = groupPromotionsByProductId(promotions.activeAt(now))
         val productsById = products.associateBy { it.id }
         var subtotal = 0.0
         var discountTotal = 0.0

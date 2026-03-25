@@ -5,5 +5,5 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithProm
 
 data class CartItemWithPromotion(
     val cartItem: CartItem,
-    val productWithPromotion: ProductWithPromotion,
+    val item: ProductWithPromotion,
 )
