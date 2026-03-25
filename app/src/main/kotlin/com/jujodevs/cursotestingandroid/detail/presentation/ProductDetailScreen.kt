@@ -20,11 +20,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -36,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
+import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
 import com.jujodevs.cursotestingandroid.detail.presentation.components.AddToCartButton
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 
@@ -47,9 +51,24 @@ fun ProductDetailScreen(
 ) {
 
     val uiState by productDetailViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(productId) {
         productDetailViewModel.onAction(ProductDetailAction.LoadProduct(productId))
+    }
+
+    ObserveAsEvents(productDetailViewModel.events) { event ->
+        when(event) {
+            ProductDetailEvent.InsufficientStockError -> {
+                snackbarHostState.showSnackbar("No hay suficiente stock")
+            }
+            ProductDetailEvent.NetworkError -> {
+                snackbarHostState.showSnackbar("No hay internet compruebe su conexión")
+            }
+            ProductDetailEvent.UnknownError -> {
+                snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
+            }
+        }
     }
 
     Scaffold(
@@ -67,7 +86,8 @@ fun ProductDetailScreen(
                     addToCart = { productDetailViewModel.onAction(ProductDetailAction.AddToCart) }
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
