@@ -90,8 +90,8 @@ fun ProductListScreen(
                 is ProductListUiState.Error -> {
                     Text(
                         text = "ERROR",
-                        fontSize = 30.sp,
-                        color = Color.Red
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.error,
                     )
                 }
 

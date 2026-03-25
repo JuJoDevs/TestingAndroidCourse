@@ -63,7 +63,8 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -76,12 +77,14 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
 
                         Text(
                             text = "Filtros y visualización",
                             style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -110,7 +113,8 @@ fun SettingsScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -123,12 +127,14 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Default.DarkMode,
                             contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(24.dp)
                         )
 
                         Text(
                             text = "Apariencia",
                             style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -142,7 +148,7 @@ fun SettingsScreen(
                         Text(
                             text = "Tema de la aplicación",
                             style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Medium,
                         )
                         Text(
                             text = "Elige entre modo claro, oscuro o seguir el sistema",
@@ -220,7 +226,7 @@ private fun SwitchableOptionRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
             )
             Text(
                 text = description,

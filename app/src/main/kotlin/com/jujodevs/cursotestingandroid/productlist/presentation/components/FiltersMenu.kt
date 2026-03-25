@@ -33,13 +33,18 @@ fun FiltersMenu(
                 horizontal = 16.dp,
                 vertical = 8.dp
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Categorías")
+            Text(
+                text = "Categorías",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -71,7 +76,11 @@ fun FiltersMenu(
 
             HorizontalDivider()
 
-            Text("Ordenar por")
+            Text(
+                text = "Ordenar por",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -125,7 +125,8 @@ fun ProductDetailScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                         ) {
                             Column(
                                 modifier = Modifier.padding(24.dp),
@@ -142,6 +143,7 @@ fun ProductDetailScreen(
                                 Text(
                                     text = product.name,
                                     style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Bold,
                                 )
 
@@ -161,7 +163,11 @@ fun ProductDetailScreen(
                                 }
 
                                 if (product.description.isNotBlank()) {
-                                    Text(product.description)
+                                    Text(
+                                        text = product.description,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
                                 }
 
                                 HorizontalDivider()
@@ -229,12 +235,12 @@ fun ProductDetailScreen(
                                 HorizontalDivider()
 
                                 val hasStock = product.stock > 0
-                                val stockBackgroundColor =
-                                    if (hasStock) MaterialTheme.colorScheme.onPrimaryContainer
-                                    else MaterialTheme.colorScheme.onErrorContainer
-                                val stockTextColor =
+                                val stockContainerColor =
                                     if (hasStock) MaterialTheme.colorScheme.primaryContainer
                                     else MaterialTheme.colorScheme.errorContainer
+                                val stockContentColor =
+                                    if (hasStock) MaterialTheme.colorScheme.onPrimaryContainer
+                                    else MaterialTheme.colorScheme.onErrorContainer
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -249,7 +255,7 @@ fun ProductDetailScreen(
 
                                     Surface(
                                         shape = RoundedCornerShape(12.dp),
-                                        color = stockBackgroundColor,
+                                        color = stockContainerColor,
                                     ) {
                                         Text(
                                             text =
@@ -262,7 +268,7 @@ fun ProductDetailScreen(
                                                 ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold,
-                                            color = stockTextColor,
+                                            color = stockContentColor,
                                         )
                                     }
                                 }
