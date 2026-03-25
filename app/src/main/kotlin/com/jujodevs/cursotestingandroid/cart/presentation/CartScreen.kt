@@ -1,6 +1,7 @@
 package com.jujodevs.cursotestingandroid.cart.presentation
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -150,6 +152,13 @@ fun CartSuccessStateScreen(
     onAction: (CartAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val currencyFormatter = remember {
+        NumberFormat.getCurrencyInstance()
+            .apply {
+                currency = Currency.getInstance("USD")
+            }
+    }
+
     Box(modifier.padding(16.dp)) {
         AnimatedContent(state.cartItems.isEmpty()) { isEmpty ->
             if (isEmpty) {
@@ -176,30 +185,34 @@ fun CartSuccessStateScreen(
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        horizontal = 16.dp,
-                        vertical = 8.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(
-                        items = state.cartItems,
-                        key = { it.cartItem.productId }
-                    ) { itemWithProduct ->
-                        CartItemCard(
-                            itemWithProduct = itemWithProduct,
-                            onAction = onAction,
-                            modifier = Modifier.animateItem()
-                        )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(
+                            items = state.cartItems,
+                            key = { it.cartItem.productId }
+                        ) { itemWithProduct ->
+                            CartItemCard(
+                                itemWithProduct = itemWithProduct,
+                                currencyFormatter = currencyFormatter,
+                                onAction = onAction,
+                                modifier = Modifier.animateItem()
+                            )
+                        }
                     }
-                }
 
-                CartSummaryCard(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    summary = state.summary,
-                )
+                    CartSummaryCard(
+                        summary = state.summary,
+                        currencyFormatter = currencyFormatter,
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    )
+                }
             }
         }
     }
@@ -208,6 +221,7 @@ fun CartSuccessStateScreen(
 @Composable
 fun CartItemCard(
     itemWithProduct: CartItemWithPromotion,
+    currencyFormatter: NumberFormat,
     onAction: (CartAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -231,13 +245,6 @@ fun CartItemCard(
             onAction(CartAction.RemoveFromCart(product.id))
             dismissState.snapTo(SwipeToDismissBoxValue.Settled)
         }
-    }
-
-    val currencyFormatter = remember {
-        NumberFormat.getCurrencyInstance()
-            .apply {
-                currency = Currency.getInstance("USD")
-            }
     }
 
     SwipeToDismissBox(
@@ -360,8 +367,83 @@ fun CartItemCard(
 
 @Composable
 fun CartSummaryCard(
-    modifier: Modifier,
-    summary: CartSummary
+    summary: CartSummary,
+    currencyFormatter: NumberFormat,
+    modifier: Modifier = Modifier,
 ) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Resumen del carrito",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = FontWeight.Bold,
+            )
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Subtotal",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+                Text(
+                    text = currencyFormatter.format(summary.subtotal),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            }
+
+            AnimatedVisibility(summary.discountTotal > 0) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Descuento",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    Text(
+                        text = currencyFormatter.format(summary.discountTotal),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
+                thickness = 1.dp
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Total",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = currencyFormatter.format(summary.finalTotal),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
 }
