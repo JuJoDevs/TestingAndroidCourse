@@ -47,24 +47,24 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotio
 fun ProductDetailScreen(
     productId: String,
     onBack: () -> Unit,
-    productDetailViewModel: ProductDetailViewModel = hiltViewModel(),
+    productDetailViewModel: ProductDetailViewModel =
+        hiltViewModel<ProductDetailViewModel, ProductDetailViewModel.Factory>(
+            creationCallback = { factory -> factory.create(productId) }
+        ),
 ) {
-
     val uiState by productDetailViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(productId) {
-        productDetailViewModel.onAction(ProductDetailAction.LoadProduct(productId))
-    }
-
     ObserveAsEvents(productDetailViewModel.events) { event ->
-        when(event) {
+        when (event) {
             ProductDetailEvent.InsufficientStockError -> {
                 snackbarHostState.showSnackbar("No hay suficiente stock")
             }
+
             ProductDetailEvent.NetworkError -> {
                 snackbarHostState.showSnackbar("No hay internet compruebe su conexión")
             }
+
             ProductDetailEvent.UnknownError -> {
                 snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
             }
