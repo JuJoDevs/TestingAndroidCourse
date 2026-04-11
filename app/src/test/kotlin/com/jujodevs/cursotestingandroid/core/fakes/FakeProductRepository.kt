@@ -6,11 +6,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 class FakeProductRepository : ProductRepository {
 
     private val _products = MutableStateFlow(emptyList<Product>())
     var refreshProductsCalls = 0
+
+    fun setProducts(product: List<Product>) {
+        _products.update { product }
+    }
 
     override fun getProducts(): Flow<List<Product>> = _products.asStateFlow()
 

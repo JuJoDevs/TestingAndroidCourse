@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class FakeCartItemRepository : CartRepository {
+class FakeCartRepository : CartRepository {
 
     private val _cartItems = MutableStateFlow(emptyList<CartItem>())
 
