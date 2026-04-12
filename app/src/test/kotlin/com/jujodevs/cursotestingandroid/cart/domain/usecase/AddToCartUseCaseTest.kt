@@ -1,11 +1,10 @@
 package com.jujodevs.cursotestingandroid.cart.domain.usecase
 
-import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
 import com.jujodevs.cursotestingandroid.core.builders.product
 import com.jujodevs.cursotestingandroid.core.domain.model.AppError
 import com.jujodevs.cursotestingandroid.core.fakes.FakeCartRepository
 import com.jujodevs.cursotestingandroid.core.fakes.FakeProductRepository
-import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -77,5 +76,44 @@ class AddToCartUseCaseTest {
         // Then
         assertTrue(exception is AppError.Validation.InsufficientStock)
         assertEquals(2, (exception as? AppError.Validation.InsufficientStock)?.available)
+    }
+
+    @Test
+    fun successful_case_adds_item_ti_cart() = runTest {
+        // Given
+        val productId = "id-test-1"
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+        productRepository.setProducts(listOf(product))
+
+        // When
+        useCase(productId, 3)
+
+        // Then
+        val items = cartRepository.getCartItems().firstOrNull()
+        assertEquals(productId, items?.firstOrNull()?.productId)
+        assertEquals(3, items?.firstOrNull()?.quantity)
+        assertEquals(1, items?.size)
+    }
+
+    @Test
+    fun default_quantity_adds_one_item() = runTest {
+        // Given
+        val productId = "id-test-1"
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+        productRepository.setProducts(listOf(product))
+
+        // When
+        useCase(productId)
+
+        // Then
+        val items = cartRepository.getCartItems().firstOrNull()
+        assertEquals(1, items?.firstOrNull()?.quantity)
+        assertEquals(1, items?.size)
     }
 }
