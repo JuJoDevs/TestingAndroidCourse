@@ -1,11 +1,13 @@
 package com.jujodevs.cursotestingandroid.cart.domain.usecase
 
 import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
+import com.jujodevs.cursotestingandroid.core.builders.product
 import com.jujodevs.cursotestingandroid.core.domain.model.AppError
 import com.jujodevs.cursotestingandroid.core.fakes.FakeCartRepository
 import com.jujodevs.cursotestingandroid.core.fakes.FakeProductRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -57,5 +59,23 @@ class AddToCartUseCaseTest {
 
         // Then
         assertTrue(exception is AppError.NotFoundError)
+    }
+
+    @Test
+    fun insufficient_stock_throws_InsufficientStock() = runTest {
+        // Given
+        val productId = "id-test-1"
+        val product = product {
+            withId(productId)
+            withStock(2)
+        }
+        productRepository.setProducts(listOf(product))
+
+        // When
+        val exception = runCatching { useCase(productId, 5) }.exceptionOrNull()
+
+        // Then
+        assertTrue(exception is AppError.Validation.InsufficientStock)
+        assertEquals(2, (exception as? AppError.Validation.InsufficientStock)?.available)
     }
 }
