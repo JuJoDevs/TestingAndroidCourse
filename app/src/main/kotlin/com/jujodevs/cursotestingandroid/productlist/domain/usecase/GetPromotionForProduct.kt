@@ -14,34 +14,34 @@ class GetPromotionForProduct @Inject constructor() {
     ): ProductPromotion? {
         val productPromos = promotions.getOrDefault(product.id, emptyList())
 
-        val percentPromos = productPromos
-            .filter { promo -> promo.type == PromotionType.PERCENT }
-            .maxByOrNull { promo -> promo.value }
+        val buyPayPromo = productPromos
+            .filter { promo ->
+                promo.type == PromotionType.BUY_X_PAY_Y && (promo.buyQuantity ?: 0) > 0
+            }
+            .minByOrNull { promo -> promo.value }
 
-        return if (percentPromos != null) {
-            val percent = percentPromos.value.coerceIn(0.0, 100.0)
-            val discountedPrice = (product.price * (1 - percent / 100.0)).roundTo2Decimals()
-            val label = "-${percent.toInt()}%"
-            ProductPromotion.Percent(
-                percent = percent,
-                discountedPrice = discountedPrice,
-                label = label,
+        return if (buyPayPromo != null) {
+            val buy = buyPayPromo.buyQuantity ?: 1
+            val pay = buyPayPromo.value.toInt().coerceIn(0, buy)
+            ProductPromotion.BuyXPayY(
+                buy = buy,
+                pay = pay,
+                label = "${buy}x$pay"
             )
         } else {
 
-            val buyPayPromo = productPromos
-                .filter { promo ->
-                    promo.type == PromotionType.BUY_X_PAY_Y && (promo.buyQuantity ?: 0) > 0
-                }
-                .minByOrNull { promo -> promo.value }
+            val percentPromos = productPromos
+                .filter { promo -> promo.type == PromotionType.PERCENT }
+                .maxByOrNull { promo -> promo.value }
 
-            if (buyPayPromo != null) {
-                val buy = buyPayPromo.buyQuantity ?: 1
-                val pay = buyPayPromo.value.toInt().coerceIn(0, buy)
-                ProductPromotion.BuyXPayY(
-                    buy = buy,
-                    pay = pay,
-                    label = "${buy}x$pay"
+            if (percentPromos != null) {
+                val percent = percentPromos.value.coerceIn(0.0, 100.0)
+                val discountedPrice = (product.price * (1 - percent / 100.0)).roundTo2Decimals()
+                val label = "-${percent.toInt()}%"
+                ProductPromotion.Percent(
+                    percent = percent,
+                    discountedPrice = discountedPrice,
+                    label = label,
                 )
             } else null
         }
