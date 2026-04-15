@@ -11,6 +11,8 @@ import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
 import com.jujodevs.cursotestingandroid.core.data.coroutines.DefaultDispatchersProvider
 import com.jujodevs.cursotestingandroid.core.domain.coroutines.DispatchersProvider
 import com.jujodevs.cursotestingandroid.core.data.local.database.MiniMarketDatabase
+import com.jujodevs.cursotestingandroid.core.data.time.SystemClock
+import com.jujodevs.cursotestingandroid.core.domain.time.Clock
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.ProductDao
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.dao.PromotionDao
 import com.jujodevs.cursotestingandroid.productlist.data.repository.ProductRepositoryImpl
@@ -91,4 +93,8 @@ object DataModule {
     fun providesSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository = settingsRepositoryImpl
+
+    @Provides
+    @Singleton
+    fun providesClock(systemClock: SystemClock): Clock = systemClock
 }

@@ -1,6 +1,7 @@
 package com.jujodevs.cursotestingandroid.productlist.domain.usecase
 
 import com.jujodevs.cursotestingandroid.cart.domain.ex.activeAt
+import com.jujodevs.cursotestingandroid.core.domain.time.Clock
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.Promotion
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
@@ -17,6 +18,7 @@ class GetProductsUseCase @Inject constructor(
     private val getPromotionForProduct: GetPromotionForProduct,
     private val groupPromotionsByProductId: GroupPromotionsByProductId,
     private val settingsRepository: SettingsRepository,
+    private val clock: Clock,
 ) {
     operator fun invoke(): Flow<List<ProductWithPromotion>> {
         return combine(
@@ -24,7 +26,7 @@ class GetProductsUseCase @Inject constructor(
             promotionRepository.getActivePromotions(),
             settingsRepository.inStockOnly,
         ) { products, promotions, inStockOnly ->
-            val now = Instant.now()
+            val now = clock.now()
             val promotions = groupPromotionsByProductId(promotions.activeAt(now))
 
             val filteredProducts = if (inStockOnly) {
