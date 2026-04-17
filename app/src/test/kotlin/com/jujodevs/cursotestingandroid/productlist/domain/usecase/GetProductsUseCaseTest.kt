@@ -57,7 +57,7 @@ class GetProductsUseCaseTest {
         }
         fakeClock.setTime(now)
         fakeProductRepository.setProducts(listOf(product))
-        fakePromotionRepository.setActivePromotions(listOf(promo))
+        fakePromotionRepository.setPromotions(listOf(promo))
 
         val result = useCase().firstOrNull()
 
@@ -78,7 +78,7 @@ class GetProductsUseCaseTest {
         }
         fakeClock.setTime(now)
         fakeProductRepository.setProducts(listOf(product))
-        fakePromotionRepository.setActivePromotions(listOf(promo))
+        fakePromotionRepository.setPromotions(listOf(promo))
 
         val firstResult = useCase().firstOrNull()
         fakeClock.advanceTime(6)

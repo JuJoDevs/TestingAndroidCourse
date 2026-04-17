@@ -16,7 +16,7 @@ class FakePromotionRepository: PromotionRepository {
         promotionsToRefresh = promotions
     }
 
-    fun setActivePromotions(promotions: List<Promotion>) {
+    fun setPromotions(promotions: List<Promotion>) {
         _promotions.update { promotions }
     }
 

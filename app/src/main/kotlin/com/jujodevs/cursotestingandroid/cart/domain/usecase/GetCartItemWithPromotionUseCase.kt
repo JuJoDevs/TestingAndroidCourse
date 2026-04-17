@@ -3,6 +3,7 @@ package com.jujodevs.cursotestingandroid.cart.domain.usecase
 import com.jujodevs.cursotestingandroid.cart.domain.ex.activeAt
 import com.jujodevs.cursotestingandroid.cart.domain.repository.CartRepository
 import com.jujodevs.cursotestingandroid.cart.presentation.model.CartItemWithPromotion
+import com.jujodevs.cursotestingandroid.core.domain.time.Clock
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.PromotionRepository
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import java.time.Instant
 import javax.inject.Inject
 
 class GetCartItemWithPromotionUseCase @Inject constructor(
@@ -22,6 +22,7 @@ class GetCartItemWithPromotionUseCase @Inject constructor(
     private val promotionRepository: PromotionRepository,
     private val groupPromotionsByProductId: GroupPromotionsByProductId,
     private val getPromotionForProduct: GetPromotionForProduct,
+    private val clock: Clock,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<List<CartItemWithPromotion>> {
@@ -36,7 +37,7 @@ class GetCartItemWithPromotionUseCase @Inject constructor(
                     productRepository.getProductsById(ids),
                     promotionRepository.getActivePromotions()
                 ) { products, promotions ->
-                    val now = Instant.now()
+                    val now = clock.now()
                     val activePromotions = groupPromotionsByProductId(promotions.activeAt(now))
                     val productsById = products.associateBy { it.id }
                     cartItems.mapNotNull { cartItem ->
