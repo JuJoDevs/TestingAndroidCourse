@@ -9,15 +9,15 @@ import com.jujodevs.cursotestingandroid.cart.domain.usecase.UpdateCartItemUseCas
 import com.jujodevs.cursotestingandroid.core.domain.safeRunCatching
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,43 +30,36 @@ class CartViewModel @Inject constructor(
     private val getCartItemWithPromotionUseCase: GetCartItemWithPromotionUseCase,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<CartUiState>(CartUiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    private val refreshTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val uiState = refreshTrigger
+        .onStart { emit(Unit) }
+        .flatMapLatest { getUiStateFlow() }
+        .catch { e ->
+            emit(CartUiState.Error(e.message.orEmpty()))
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = CartUiState.Loading
+        )
 
     private val _events = MutableSharedFlow<CartEvent>(extraBufferCapacity = 1)
     val events = _events.asSharedFlow()
 
-    var cartJob: Job? = null
-
-    init {
-        loadCart()
+    private fun getUiStateFlow(): Flow<CartUiState> = combine(
+        getCartItemWithPromotionUseCase(),
+        getCartSummaryUseCase()
+    ) { cartItemWithPromotions, summary ->
+        CartUiState.Success(
+            summary = summary,
+            cartItems = cartItemWithPromotions,
+            isLoading = false
+        ) as CartUiState
     }
 
-    private fun loadCart() {
-        _uiState.value = CartUiState.Loading
-        cartJob?.cancel()
-
-        cartJob = combine(
-            getCartItemWithPromotionUseCase(),
-            getCartSummaryUseCase()
-        ) { cartItemWithPromotions, summary ->
-            _uiState.update {
-                CartUiState.Success(
-                    summary = summary,
-                    cartItems = cartItemWithPromotions,
-                    isLoading = false
-                )
-            }
-        }
-            .catch { e ->
-                _uiState.update { CartUiState.Error(e.message.orEmpty()) }
-            }
-            .launchIn(viewModelScope)
-    }
 
     fun onAction(action: CartAction) {
         when (action) {
-            CartAction.LoadCart -> loadCart()
+            CartAction.LoadCart -> refresh()
             is CartAction.UpdateCartItem -> updateCartItem(
                 productId = action.productId,
                 quantity = action.quantity
@@ -82,6 +75,12 @@ class CartViewModel @Inject constructor(
                 action.productId,
                 action.currentQuantity
             )
+        }
+    }
+
+    private fun refresh() {
+        viewModelScope.launch {
+            refreshTrigger.emit(Unit)
         }
     }
 
