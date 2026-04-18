@@ -8,19 +8,14 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.SettingsRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,27 +24,19 @@ class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    val uiState = getUiStateFlow()
 
     private val _events = MutableSharedFlow<ProductListEvent>(extraBufferCapacity = 1)
     val events = _events.asSharedFlow()
 
     val filterVisible = settingsRepository.filtersVisible.stateIn(
         scope = viewModelScope,
-        initialValue = true,
-        started = SharingStarted.WhileSubscribed(5000)
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = true
     )
 
-    private var productsJob: Job? = null
-
-    init {
-        loadProducts()
-    }
-
-    fun loadProducts() {
-        productsJob?.cancel()
-        productsJob = combine(
+    private fun getUiStateFlow(): StateFlow<ProductListUiState> =
+        combine(
             getProductsUseCase(),
             settingsRepository.selectedCategory,
             settingsRepository.sortOption,
@@ -68,6 +55,7 @@ class ProductListViewModel @Inject constructor(
                         effectiveDiscountPercent(it)
                     }.thenBy { it.promotion == null }
                 )
+
                 SortOption.NONE -> filteredProducts
             }
             val categories = products.map { product -> product.product.category }
@@ -79,13 +67,14 @@ class ProductListViewModel @Inject constructor(
                 categories = categories,
                 selectedCategory = category,
                 sortOption = sortOption,
-            )
-        }.onEach { state ->
-            _uiState.update { state }
+            ) as ProductListUiState
         }.catch { e ->
-            _uiState.update { ProductListUiState.Error(e.message.orEmpty()) }
-        }.launchIn(viewModelScope)
-    }
+            emit(ProductListUiState.Error(e.message.orEmpty()))
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ProductListUiState.Loading
+        )
 
     private fun effectivePrice(item: ProductWithPromotion): Double {
         return when (val promo = item.promotion) {
