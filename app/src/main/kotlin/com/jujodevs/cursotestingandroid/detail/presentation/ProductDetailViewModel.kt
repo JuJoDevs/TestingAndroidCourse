@@ -15,6 +15,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -41,19 +46,15 @@ class ProductDetailViewModel @AssistedInject constructor(
         fun create(productId: String): ProductDetailViewModel
     }
 
-    private val _uiState = MutableStateFlow(ProductDetailUiState())
-    val uiState = _uiState.asStateFlow()
-        .onStart { loadProduct(productId) }
+    val uiState = getUiStateFlow(productId)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = _uiState.value,
+            initialValue = ProductDetailUiState(),
         )
 
     private val _events = MutableSharedFlow<ProductDetailEvent>(extraBufferCapacity = 1)
     val events = _events.asSharedFlow()
-
-    private var productJob: Job? = null
 
     fun onAction(action: ProductDetailAction) {
         when (action) {
@@ -61,28 +62,23 @@ class ProductDetailViewModel @AssistedInject constructor(
         }
     }
 
-    private fun loadProduct(productId: String) {
-        _uiState.update { it.copy(isLoading = true) }
-        productJob?.cancel()
-        productJob = getProductDetailWithPromotion(productId)
-            .onEach { product ->
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        item = product
-                    )
-                }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getUiStateFlow(productId: String) =
+        getProductDetailWithPromotion(productId)
+            .mapLatest { product ->
+                ProductDetailUiState(
+                    isLoading = false,
+                    item = product,
+                )
             }
             .catch { e ->
-                _uiState.update { it.copy(isLoading = false) }
                 if (e is AppError) handleError(e)
                 else handleError(UnknownError(e.message))
+                emit(ProductDetailUiState(isLoading = false,))
             }
-            .launchIn(viewModelScope)
-    }
 
     private fun addToCart() {
-        val product = _uiState.value.item?.product?.id ?: return
+        val product = uiState.value.item?.product?.id ?: return
         viewModelScope.launch {
             safeRunCatching {
                 addToCartUseCase(product)
