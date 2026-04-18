@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.jujodevs.cursotestingandroid.core.domain.model.ThemeMode
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -22,28 +23,19 @@ class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState = _uiState.asStateFlow()
-        .onStart { loadSettings() }
-        .stateIn(
+    val uiState = combine(
+        settingsRepository.inStockOnly,
+        settingsRepository.themeMode,
+    ) { inStockOnly, themeMode ->
+        SettingsUiState(
+            inStockOnly = inStockOnly,
+            themeMode = themeMode
+        )
+    }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = SettingsUiState(),
         )
-
-    private fun loadSettings() {
-        combine(
-            settingsRepository.inStockOnly,
-            settingsRepository.themeMode,
-        ) { inStockOnly, themeMode ->
-            _uiState.update {
-                it.copy(
-                    inStockOnly = inStockOnly,
-                    themeMode = themeMode
-                )
-            }
-        }.launchIn(viewModelScope)
-    }
 
     fun onAction(action: SettingsAction) {
         when (action) {
