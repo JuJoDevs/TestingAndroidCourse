@@ -1,0 +1,36 @@
+package com.jujodevs.cursotestingandroid.core.builders
+
+import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.PromotionEntity
+import com.jujodevs.cursotestingandroid.productlist.domain.model.Promotion
+import com.jujodevs.cursotestingandroid.productlist.domain.model.PromotionType
+import java.time.Instant
+
+class PromotionEntityBuilder {
+    private var id: String = "promotion-1"
+    private var type: PromotionType = PromotionType.PERCENT
+    private var productsIds: List<String> = listOf("product-1")
+    private var value: Double = 10.0
+    private var buyQuantity: Int? = null
+    private var startTime: Instant = Instant.now().minusSeconds(3600)
+    private var endTime: Instant = Instant.now().plusSeconds(3600)
+
+    fun withId(id: String) = apply { this.id = id }
+    fun withType(type: PromotionType) = apply { this.type = type }
+    fun withProductsIds(productsIds: List<String>) = apply { this.productsIds = productsIds }
+    fun withValue(value: Double) = apply { this.value = value }
+    fun withBuyQuantity(buyQuantity: Int?) = apply { this.buyQuantity = buyQuantity }
+    fun withStartTime(startTime: Instant) = apply { this.startTime = startTime }
+    fun withEndTime(endTime: Instant) = apply { this.endTime = endTime }
+
+    fun build() = Promotion(
+        id = id,
+        type = type,
+        productsIds = productsIds,
+        value = value,
+        buyQuantity = buyQuantity,
+        startTime = startTime,
+        endTime = endTime,
+    )
+}
+
+fun promotionEntity(block: PromotionEntityBuilder.() -> Unit = {}) = PromotionEntityBuilder().apply(block).build()
