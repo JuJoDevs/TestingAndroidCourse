@@ -3,6 +3,7 @@ package com.jujodevs.cursotestingandroid.core.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -27,6 +28,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.runBlocking
 import javax.inject.Singleton
 
 private val Context.testingDataStore: DataStore<Preferences> by preferencesDataStore(name = "testing_settings")
@@ -90,11 +92,12 @@ object TestDataModule {
     @Singleton
     fun provideDataStore(): DataStore<Preferences> {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        return context.testingDataStore
+        return context.testingDataStore.apply {
+            runBlocking { edit { preferences -> preferences.clear() } }
+        }
     }
 
     @Provides
-    @Singleton
     fun providesSettingsRepository(
         settingsRepositoryImpl: SettingsRepositoryImpl
     ): SettingsRepository = settingsRepositoryImpl
