@@ -2,9 +2,9 @@ package com.jujodevs.cursotestingandroid.core.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartDao
@@ -28,10 +28,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import kotlinx.coroutines.runBlocking
+import java.util.UUID
 import javax.inject.Singleton
-
-private val Context.testingDataStore: DataStore<Preferences> by preferencesDataStore(name = "testing_settings")
 
 @Module
 @TestInstallIn(
@@ -92,9 +90,13 @@ object TestDataModule {
     @Singleton
     fun provideDataStore(): DataStore<Preferences> {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        return context.testingDataStore.apply {
-            runBlocking { edit { preferences -> preferences.clear() } }
-        }
+        val name = "test_settings_${UUID.randomUUID()}"
+
+        return PreferenceDataStoreFactory.create(
+            produceFile = {
+                context.preferencesDataStoreFile(name)
+            },
+        )
     }
 
     @Provides
