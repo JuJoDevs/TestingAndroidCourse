@@ -28,6 +28,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import java.io.File
 import java.util.UUID
 import javax.inject.Singleton
 
@@ -90,11 +91,11 @@ object TestDataModule {
     @Singleton
     fun provideDataStore(): DataStore<Preferences> {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val name = "test_settings_${UUID.randomUUID()}"
+        val name = "test_settings_${UUID.randomUUID()}.preferences_pb"
 
         return PreferenceDataStoreFactory.create(
             produceFile = {
-                context.preferencesDataStoreFile(name)
+                File(context.cacheDir, name)
             },
         )
     }

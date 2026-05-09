@@ -15,6 +15,7 @@ class MockWebServerRule: TestWatcher() {
     }
 
     override fun finished(description: Description?) {
+        MockWebServerUrlHolder.baseUrl = "http://localhost:8080"
         server.shutdown()
     }
 }
