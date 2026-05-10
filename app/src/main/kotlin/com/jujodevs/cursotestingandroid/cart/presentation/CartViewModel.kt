@@ -114,7 +114,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    fun increaseQuantity(
+    private fun increaseQuantity(
         productId: String,
         currentQuantity: Int,
     ) {
@@ -124,7 +124,7 @@ class CartViewModel @Inject constructor(
         )
     }
 
-    fun decreaseQuantity(
+    private fun decreaseQuantity(
         productId: String,
         currentQuantity: Int,
     ) {
