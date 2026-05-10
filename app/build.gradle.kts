@@ -12,6 +12,15 @@ android {
         version = release(36)
     }
 
+    sourceSets {
+        getByName("test") {
+            kotlin.directories.add("src/sharedTest/kotlin")
+        }
+        getByName("androidTest") {
+            kotlin.directories.add("src/sharedTest/kotlin")
+        }
+    }
+
     defaultConfig {
         applicationId = "com.jujodevs.cursotestingandroid"
         minSdk = 26

@@ -98,7 +98,7 @@ class CartViewModelTest {
         cartRepository.setCartItems(listOf(cartItem))
         val state = viewModel.uiState.testIn(this).apply { awaitItem() }
 
-        viewModel.decreaseQuantity(productId, 1)
+        viewModel.onAction(CartAction.DecreaseQuantity(productId, 1))
 
         val updatedState = state.awaitItem() as CartUiState.Success
         assertEquals(0, updatedState.cartItems.size)
