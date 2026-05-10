@@ -89,6 +89,9 @@ mockWebServer = { group = "com.squareup.okhttp3", name = "mockwebserver", versio
 #Turbine
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
+#Kotlin Test
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
