@@ -5,16 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.jujodevs.cursotestingandroid.core.domain.model.ThemeMode
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,10 +32,20 @@ class SettingsViewModel @Inject constructor(
             initialValue = SettingsUiState(),
         )
 
+    private val _uiEvent = MutableSharedFlow<SettingsUiEvent>(extraBufferCapacity = 1)
+    val uiEvent = _uiEvent.asSharedFlow()
+
     fun onAction(action: SettingsAction) {
         when (action) {
+            is SettingsAction.OnBack -> onBack()
             is SettingsAction.SetInStockOnly -> setInStockOnly(action.inStockOnly)
             is SettingsAction.SetThemeMode -> setThemeMode(action.themeMode)
+        }
+    }
+
+    private fun onBack() {
+        viewModelScope.launch {
+            _uiEvent.emit(SettingsUiEvent.onBack)
         }
     }
 
