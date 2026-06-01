@@ -2,9 +2,7 @@ package com.jujodevs.cursotestingandroid.core.builders
 
 import com.jujodevs.cursotestingandroid.core.toListString
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.PromotionEntity
-import com.jujodevs.cursotestingandroid.productlist.domain.model.Promotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.PromotionType
-import java.time.Instant
 
 class PromotionEntityBuilder {
     private var id: String = "promotion-1"

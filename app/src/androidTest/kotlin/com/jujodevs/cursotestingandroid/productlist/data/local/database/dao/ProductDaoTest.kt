@@ -3,13 +3,9 @@ package com.jujodevs.cursotestingandroid.productlist.data.local.database.dao
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.jujodevs.cursotestingandroid.core.builders.productEntity
 import com.jujodevs.cursotestingandroid.core.data.local.database.MiniMarketDatabase
 import com.jujodevs.cursotestingandroid.core.runTurbineTest
-import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
-import junit.framework.TestCase.assertNull
-import kotlinx.coroutines.flow.any
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -19,7 +15,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.collections.emptyList
 
 @RunWith(AndroidJUnit4::class)
 class ProductDaoTest {

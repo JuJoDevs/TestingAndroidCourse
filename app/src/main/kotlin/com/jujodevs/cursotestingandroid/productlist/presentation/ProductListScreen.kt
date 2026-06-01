@@ -20,16 +20,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jujodevs.cursotestingandroid.cart.domain.model.CartSummary
 import com.jujodevs.cursotestingandroid.cart.presentation.CartUiState
 import com.jujodevs.cursotestingandroid.cart.presentation.CartViewModel
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
+import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
+import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.FiltersMenu
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.HomeTopAppBar
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.ProductItem
+import com.jujodevs.cursotestingandroid.settings.presentation.SettingsContent
+import com.jujodevs.cursotestingandroid.settings.presentation.SettingsUiState
+import com.jujodevs.cursotestingandroid.ui.theme.CursoTestingAndroidTheme
 
 @Composable
 fun ProductListScreen(
@@ -57,7 +66,7 @@ fun ProductListScreen(
     }
 
     val cartItemCount = remember(cartUiState) {
-        when(val state = cartUiState) {
+        when (val state = cartUiState) {
             is CartUiState.Error -> 0
             CartUiState.Loading -> 0
             is CartUiState.Success -> {
@@ -66,12 +75,29 @@ fun ProductListScreen(
         }
     }
 
+    ProductListContent(
+        uiState = uiState,
+        cartItemCount = cartItemCount,
+        filterVisible = filterVisible,
+        snackbarHostState = snackbarHostState,
+        onAction = productListViewModel::onAction
+    )
+}
+
+@Composable
+internal fun ProductListContent(
+    uiState: ProductListUiState,
+    cartItemCount: Int,
+    filterVisible: Boolean,
+    snackbarHostState: SnackbarHostState,
+    onAction: (ProductListAction) -> Unit,
+) {
     Scaffold(
         topBar = {
             HomeTopAppBar(
                 filterVisible = filterVisible,
                 cartItemCount = cartItemCount,
-                onAction = productListViewModel::onAction
+                onAction = onAction
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -102,7 +128,7 @@ fun ProductListScreen(
                         AnimatedVisibility(filterVisible) {
                             FiltersMenu(
                                 state = state,
-                                onAction = productListViewModel::onAction
+                                onAction = onAction
                             )
                         }
 
@@ -143,7 +169,7 @@ fun ProductListScreen(
                                     ProductItem(
                                         item = item,
                                         onClick = {
-                                            productListViewModel.onAction(
+                                            onAction(
                                                 ProductListAction.NavToProductDetail(item)
                                             )
                                         },
@@ -156,5 +182,44 @@ fun ProductListScreen(
                 }
             }
         }
+    }
+}
+
+
+@Preview(uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingsScreenPreview() {
+    val products =
+        listOf(
+            ProductWithPromotion(
+                product = Product(
+                    id = "causae",
+                    name = "Maryanne Bird",
+                    description = "principes",
+                    price = 2.3,
+                    category = "ferri",
+                    stock = 5867,
+                    imageUrl = "https://www.google.com/#q=dicunt"
+                )
+            )
+        )
+
+    CursoTestingAndroidTheme {
+        ProductListContent(
+            uiState = ProductListUiState.Success(
+                products = products,
+                categories = listOf(
+                    "category-1",
+                    "category-2",
+                    "category-3"
+                ),
+                selectedCategory = "category-2",
+                sortOption = SortOption.NONE,
+            ),
+            cartItemCount = 1,
+            filterVisible = true,
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = { }
+        )
     }
 }

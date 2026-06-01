@@ -1,7 +1,6 @@
 package com.jujodevs.cursotestingandroid.core.builders
 
 import com.jujodevs.cursotestingandroid.cart.data.local.database.entity.CartItemEntity
-import com.jujodevs.cursotestingandroid.cart.domain.model.CartItem
 
 class CartItemEntityBuilder {
     private var productId: String = "product-1"

@@ -1,7 +1,6 @@
 package com.jujodevs.cursotestingandroid.core.builders
 
 import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.ProductEntity
-import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
 
 class ProductEntityBuilder {
 

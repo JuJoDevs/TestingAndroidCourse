@@ -3,7 +3,6 @@ package com.jujodevs.cursotestingandroid.productlist.data.local.database.dao
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import app.cash.turbine.test
 import com.jujodevs.cursotestingandroid.core.builders.promotionEntity
 import com.jujodevs.cursotestingandroid.core.data.local.database.MiniMarketDatabase
 import com.jujodevs.cursotestingandroid.core.runTurbineTest
