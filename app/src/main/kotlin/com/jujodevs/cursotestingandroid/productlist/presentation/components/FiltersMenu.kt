@@ -15,7 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.jujodevs.cursotestingandroid.R
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListUiState
@@ -29,6 +33,7 @@ fun FiltersMenu(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .testTag(FILTER_VIEW)
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
@@ -41,7 +46,7 @@ fun FiltersMenu(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Categorías",
+                text = stringResource(R.string.filters_categories_title),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -55,7 +60,7 @@ fun FiltersMenu(
                     selected = state.selectedCategory == null,
                     onClick = { onAction(ProductListAction.SetCategory(null)) },
                     label = { Text(
-                        text = "Todas",
+                        text = stringResource(R.string.filters_all_categories),
                         style = MaterialTheme.typography.labelSmall
                     ) }
                 )
@@ -77,7 +82,7 @@ fun FiltersMenu(
             HorizontalDivider()
 
             Text(
-                text = "Ordenar por",
+                text = stringResource(R.string.filters_sort_by_title),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -87,21 +92,21 @@ fun FiltersMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OrderFilterChip(
-                    text = "Precio ↑",
+                    text = stringResource(R.string.filters_sort_price_asc),
                     sortOption = SortOption.PRICE_ASC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
                     modifier = Modifier.weight(1f),
                 )
                 OrderFilterChip(
-                    text = "Precio ↓",
+                    text = stringResource(R.string.filters_sort_price_desc),
                     sortOption = SortOption.PRICE_DESC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
                     modifier = Modifier.weight(1f),
                 )
                 OrderFilterChip(
-                    text = "Descuento",
+                    text = stringResource(R.string.filters_sort_discount),
                     sortOption = SortOption.DISCOUNT,
                     currentSortOption = state.sortOption,
                     onAction = onAction,

@@ -19,25 +19,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jujodevs.cursotestingandroid.cart.domain.model.CartSummary
+import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.cart.presentation.CartUiState
 import com.jujodevs.cursotestingandroid.cart.presentation.CartViewModel
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LIST
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LOADING
 import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.FiltersMenu
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.HomeTopAppBar
 import com.jujodevs.cursotestingandroid.productlist.presentation.components.ProductItem
-import com.jujodevs.cursotestingandroid.settings.presentation.SettingsContent
-import com.jujodevs.cursotestingandroid.settings.presentation.SettingsUiState
 import com.jujodevs.cursotestingandroid.ui.theme.CursoTestingAndroidTheme
 
 @Composable
@@ -110,12 +110,12 @@ internal fun ProductListContent(
         ) {
             when (val state = uiState) {
                 ProductListUiState.Loading -> {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(Modifier.testTag(PRODUCT_LIST_LOADING))
                 }
 
                 is ProductListUiState.Error -> {
                     Text(
-                        text = "ERROR",
+                        text = stringResource(R.string.product_list_error),
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -133,7 +133,7 @@ internal fun ProductListContent(
                         }
 
                         Text(
-                            text = "${state.products.size} productos",
+                            text = stringResource(R.string.product_list_count, state.products.size),
                             modifier = Modifier.padding(
                                 horizontal = 16.dp,
                                 vertical = 8.dp
@@ -153,18 +153,20 @@ internal fun ProductListContent(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     Text(
-                                        text = "🔍",
+                                        text = stringResource(R.string.product_list_empty_icon),
                                         style = MaterialTheme.typography.displayMedium
                                     )
                                     Text(
-                                        text = "No se encontraron productos",
+                                        text = stringResource(R.string.product_list_no_products),
                                         style = MaterialTheme.typography.titleLarge,
                                         color = MaterialTheme.colorScheme.tertiary
                                     )
                                 }
                             }
                         } else {
-                            LazyColumn {
+                            LazyColumn(
+                                modifier = Modifier.testTag(PRODUCT_LIST_LIST)
+                            ) {
                                 items(state.products) { item ->
                                     ProductItem(
                                         item = item,

@@ -28,11 +28,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.jujodevs.cursotestingandroid.R
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.productListItem
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import java.util.Locale
@@ -55,6 +59,7 @@ fun ProductItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .testTag(productListItem(product.id))
             .padding(
                 horizontal = 16.dp,
                 vertical = 8.dp
@@ -150,7 +155,7 @@ fun ProductItem(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "Antes",
+                                    text = stringResource(R.string.product_item_old_price),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
@@ -170,7 +175,7 @@ fun ProductItem(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Text(
-                                    text = "Ahora",
+                                    text = stringResource(R.string.product_item_new_price),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )

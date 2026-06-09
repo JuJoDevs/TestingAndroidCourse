@@ -17,8 +17,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +35,7 @@ fun HomeTopAppBar(
         modifier = modifier,
         title = {
             Text(
-                text = "MiniMarket",
+                text = stringResource(R.string.app_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
             )
@@ -52,8 +54,8 @@ fun HomeTopAppBar(
                         if (filterVisible) Icons.Default.FilterListOff
                         else Icons.Default.FilterList,
                     contentDescription =
-                        if (filterVisible) "Ocultar filtros"
-                        else "Mostrar filtros",
+                        if (filterVisible) stringResource(R.string.top_app_bar_hide_filters)
+                        else stringResource(R.string.top_app_bar_show_filters),
                 )
             }
             IconButton(
@@ -61,7 +63,7 @@ fun HomeTopAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = "Ir a opciones"
+                    contentDescription = stringResource(R.string.top_app_bar_go_to_settings)
                 )
             }
             BadgedBox(
@@ -84,7 +86,7 @@ fun HomeTopAppBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Ir a carrito"
+                        contentDescription = stringResource(R.string.top_app_bar_go_to_cart)
                     )
                 }
             }
