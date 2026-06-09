@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -24,6 +25,7 @@ import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LIST
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LOADING
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BADGE
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.productListItem
 import com.jujodevs.cursotestingandroid.core.utils.getString
 import com.jujodevs.cursotestingandroid.core.utils.onListItemNodeWithTag
@@ -153,6 +155,37 @@ class ProductListScreenTest {
             .performClick()
 
         assertEquals(expectedSortOption, sortOptionResult)
+    }
+
+    @Test
+    fun givenCartItemCountZero_whenRendered_thenHidesBadge() = withComposeRule {
+        createProductListScreen(cartItemCount = 0)
+
+        onNodeWithTag(TOP_APP_BAR_BADGE).assertDoesNotExist()
+    }
+
+    @Test
+    fun givenCartItemCountOne_whenRendered_thenShowsOne() = withComposeRule {
+        createProductListScreen(cartItemCount = 1)
+
+        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+        onNodeWithText("1").assertIsDisplayed()
+    }
+
+    @Test
+    fun givenCartItemCountNinetyNine_whenRendered_thenShowsNinetyNine() = withComposeRule {
+        createProductListScreen(cartItemCount = 99)
+
+        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+        onNodeWithText("99").assertIsDisplayed()
+    }
+
+    @Test
+    fun givenCartItemCountOverNinetyNine_whenRendered_thenShowsNinetyNinePlus() = withComposeRule {
+        createProductListScreen(cartItemCount = 100)
+
+        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+        onNodeWithText(getString(R.string.top_app_bar_badge_ninety_nine_plus)).assertIsDisplayed()
     }
 
     private fun withComposeRule(

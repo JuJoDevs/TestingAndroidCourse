@@ -4,7 +4,8 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 
 object UiTestTag {
 
-    const val TOP_APP_BAR = "top_app_bar"
+    const val TOP_APP_BAR_BACK = "top_app_bar"
+    const val TOP_APP_BAR_BADGE = "top_app_bar_badge"
     const val FILTER_VIEW = "product_list_filter"
 
     // SETTINGS

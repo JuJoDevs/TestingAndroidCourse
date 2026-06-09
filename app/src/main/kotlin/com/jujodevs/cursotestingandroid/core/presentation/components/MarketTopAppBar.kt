@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BACK
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +33,7 @@ fun MarketTopAppBar(
         },
         navigationIcon = {
             IconButton(
-                modifier = Modifier.testTag(TOP_APP_BAR),
+                modifier = Modifier.testTag(TOP_APP_BAR_BACK),
                 onClick = { onBack() },
             ) {
                 Icon(

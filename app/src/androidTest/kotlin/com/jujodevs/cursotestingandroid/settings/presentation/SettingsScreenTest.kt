@@ -6,7 +6,6 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -18,7 +17,7 @@ import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.SETTINGS_CONTENT
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.SETTINGS_IN_STOCK_SWITCH
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.SETTINGS_TAX_SWITCH
-import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BACK
 import com.jujodevs.cursotestingandroid.core.utils.getString
 import com.jujodevs.cursotestingandroid.ui.theme.CursoTestingAndroidTheme
 import org.junit.Rule
@@ -106,7 +105,7 @@ class SettingsScreenTest {
                 if (it is SettingsAction.OnBack) backClicked = true
             }
         )
-        onNodeWithTag(TOP_APP_BAR).performClick()
+        onNodeWithTag(TOP_APP_BAR_BACK).performClick()
 
         assertTrue(backClicked)
     }

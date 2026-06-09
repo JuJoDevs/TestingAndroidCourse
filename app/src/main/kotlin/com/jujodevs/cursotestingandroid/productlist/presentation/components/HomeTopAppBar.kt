@@ -17,10 +17,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jujodevs.cursotestingandroid.R
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BADGE
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,10 +73,15 @@ fun HomeTopAppBar(
                 badge = {
                     if (cartItemCount > 0) {
                         Badge(
-                            modifier = Modifier.offset(x = (-8).dp, y = (8).dp)
+                            modifier = Modifier
+                                .testTag(TOP_APP_BAR_BADGE)
+                                .offset(x = (-8).dp, y = (8).dp)
                         ) {
                             Text(
-                                text = if (cartItemCount > 99) "99+" else cartItemCount.toString(),
+                                text =
+                                    if (cartItemCount > 99)
+                                        stringResource(R.string.top_app_bar_badge_ninety_nine_plus)
+                                    else cartItemCount.toString(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                             )
