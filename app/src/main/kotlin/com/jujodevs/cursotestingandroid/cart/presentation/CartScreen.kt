@@ -60,6 +60,9 @@ import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_EMPTY
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_LOADING
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_RETRY
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.cartItem
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.cartQuantityDecrease
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.cartQuantityIncrease
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 import java.text.NumberFormat
 import java.util.Currency
@@ -271,6 +274,7 @@ fun CartItemCard(
     }
 
     SwipeToDismissBox(
+        modifier = modifier.testTag(cartItem(product.id)),
         state = dismissState,
         enableDismissFromEndToStart = false,
         backgroundContent = {
@@ -289,7 +293,6 @@ fun CartItemCard(
                 )
             }
         },
-        modifier = modifier,
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -390,6 +393,8 @@ fun CartItemCard(
                             color = MaterialTheme.colorScheme.surfaceVariant,
                             shape = RoundedCornerShape(8.dp)
                         ),
+                        increaseTestTag = cartQuantityIncrease(cartItem.productId),
+                        decreaseTestTag = cartQuantityDecrease(cartItem.productId)
                     )
                 }
             }

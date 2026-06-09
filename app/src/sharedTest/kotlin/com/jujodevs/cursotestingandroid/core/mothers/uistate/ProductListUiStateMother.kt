@@ -17,9 +17,9 @@ object ProductListUiStateMother {
         products = listOf(
             ProductWithPromotion(bread),
             ProductWithPromotion(milk),
-            ProductWithPromotion(coffee, PromotionMother.percent()),
+            ProductWithPromotion(coffee, PromotionMother.percent),
             ProductWithPromotion(apple),
-            ProductWithPromotion(yogurt, PromotionMother.buyXGetY()),
+            ProductWithPromotion(yogurt, PromotionMother.buyXGetY),
             ProductWithPromotion(chicken),
         ),
         categories = setOf(bread.category, milk.category, coffee.category, apple.category, yogurt.category, chicken.category).toList(),
