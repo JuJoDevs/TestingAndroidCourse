@@ -1,6 +1,5 @@
 package com.jujodevs.cursotestingandroid.core.mothers
 
-import com.jujodevs.cursotestingandroid.core.builders.promotion
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 
 object PromotionMother {

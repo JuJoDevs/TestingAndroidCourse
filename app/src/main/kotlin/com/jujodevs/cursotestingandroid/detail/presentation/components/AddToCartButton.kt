@@ -1,6 +1,5 @@
 package com.jujodevs.cursotestingandroid.detail.presentation.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +18,6 @@ fun AddToCartButton(
         product?.let { product ->
             if (product.stock > 0) {
                 AddToCartButtonWithStock(
-                    product = product,
                     isLoading = isLoading,
                     addToCart = addToCart,
                 )

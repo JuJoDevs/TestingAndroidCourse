@@ -17,8 +17,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jujodevs.cursotestingandroid.R
 
 @Composable
 fun AddToCartButtonNoStock(
@@ -46,7 +48,7 @@ fun AddToCartButtonNoStock(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "Sin stock disponible",
+                    text = stringResource(R.string.product_detail_no_stock_available),
                     fontWeight = FontWeight.Bold
                 )
             }

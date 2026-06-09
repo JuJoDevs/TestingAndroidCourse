@@ -41,8 +41,10 @@ import coil3.compose.AsyncImage
 import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_DETAIL_LOADING
 import com.jujodevs.cursotestingandroid.detail.presentation.components.AddToCartButton
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun ProductDetailScreen(
@@ -123,7 +125,8 @@ internal fun ProductDetailContain(
         ) {
             if (uiState.isLoading) {
                 Box(
-                    Modifier.fillMaxSize(),
+                    Modifier.fillMaxSize()
+                        .testTag(PRODUCT_DETAIL_LOADING),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()

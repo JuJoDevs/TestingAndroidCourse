@@ -17,13 +17,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
+import com.jujodevs.cursotestingandroid.R
 
 @Composable
 fun AddToCartButtonWithStock(
-    product: Product?,
     isLoading: Boolean,
     addToCart: () -> Unit,
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ fun AddToCartButtonWithStock(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "Agregar al carrito",
+                    text = stringResource(R.string.product_detail_add_to_cart),
                     fontWeight = FontWeight.Bold
                 )
             }

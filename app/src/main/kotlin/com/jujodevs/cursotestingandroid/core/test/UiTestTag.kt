@@ -29,6 +29,9 @@ object UiTestTag {
 
     fun productListSort(sortOption: SortOption) = "product_list_sort_option_${sortOption.name}"
 
+    // PRODUCT DETAIL
+    const val PRODUCT_DETAIL_LOADING = "product_detail_loading"
+
     // CART
 
     const val CART_LOADING = "cart_loading"
