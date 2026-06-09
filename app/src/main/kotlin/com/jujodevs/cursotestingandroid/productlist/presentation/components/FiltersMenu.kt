@@ -100,7 +100,7 @@ fun FiltersMenu(
                     currentSortOption = state.sortOption,
                     onAction = onAction,
                     modifier = Modifier
-                        .testTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+                        .testTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
                         .weight(1f),
                 )
                 OrderFilterChip(
@@ -109,7 +109,7 @@ fun FiltersMenu(
                     currentSortOption = state.sortOption,
                     onAction = onAction,
                     modifier = Modifier
-                        .testTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+                        .testTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
                         .weight(1f),
                 )
                 OrderFilterChip(
@@ -118,7 +118,7 @@ fun FiltersMenu(
                     currentSortOption = state.sortOption,
                     onAction = onAction,
                     modifier = Modifier
-                        .testTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+                        .testTag(UiTestTag.productListSort(SortOption.DISCOUNT))
                         .weight(1f),
                 )
             }

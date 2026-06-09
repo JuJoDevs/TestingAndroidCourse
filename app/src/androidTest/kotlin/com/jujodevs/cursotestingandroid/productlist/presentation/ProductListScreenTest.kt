@@ -118,11 +118,11 @@ class ProductListScreenTest {
             uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE)
         )
 
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
             .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
             .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
             .assertIsNotSelected()
     }
 
@@ -132,32 +132,12 @@ class ProductListScreenTest {
             uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.PRICE_ASC)
         )
 
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
             .assertIsSelected()
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
             .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+        onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
             .assertIsNotSelected()
-    }
-
-    @Test
-    fun givenRendered_whenSelectSortOption_thenMarkChipWithSortOptionSelected() = withComposeRule {
-        val expectedSortOption = SortOption.DISCOUNT
-        var sortOptionResult:SortOption = SortOption.NONE
-
-        createProductListScreen(
-            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE),
-            onAction = {
-                if (it is ProductListAction.SetOrderSelected) {
-                    sortOptionResult = it.sortOption
-                }
-            }
-        )
-
-        onNodeWithTag(UiTestTag.productListSortOption(expectedSortOption))
-            .performClick()
-
-        assertEquals(expectedSortOption, sortOptionResult)
     }
 
     @Test
@@ -251,6 +231,60 @@ class ProductListScreenTest {
         onNodeWithTag(TOP_APP_BAR_CART).performClick()
 
         assertTrue(cartClicked)
+    }
+
+    @Test
+    fun givenProductListRendered_whenSortDiscountClick_thenEmitSortDiscountOption() = withComposeRule {
+        val expectedSortOption = SortOption.DISCOUNT
+        var sortOptionResult:SortOption = SortOption.NONE
+        createProductListScreen(
+            onAction = {
+                if (it is ProductListAction.SetOrderSelected) {
+                    sortOptionResult = it.sortOption
+                }
+            }
+        )
+
+        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+            .performClick()
+
+        assertEquals(expectedSortOption, sortOptionResult)
+    }
+
+    @Test
+    fun givenProductListRendered_whenSortPriceDescClick_thenEmitSortPriceDescOption() = withComposeRule {
+        val expectedSortOption = SortOption.PRICE_DESC
+        var sortOptionResult:SortOption = SortOption.NONE
+        createProductListScreen(
+            onAction = {
+                if (it is ProductListAction.SetOrderSelected) {
+                    sortOptionResult = it.sortOption
+                }
+            }
+        )
+
+        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+            .performClick()
+
+        assertEquals(expectedSortOption, sortOptionResult)
+    }
+
+    @Test
+    fun givenProductListRendered_whenSortPriceAscClick_thenEmitSortPriceAscOption() = withComposeRule {
+        val expectedSortOption = SortOption.PRICE_ASC
+        var sortOptionResult:SortOption = SortOption.NONE
+        createProductListScreen(
+            onAction = {
+                if (it is ProductListAction.SetOrderSelected) {
+                    sortOptionResult = it.sortOption
+                }
+            }
+        )
+
+        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+            .performClick()
+
+        assertEquals(expectedSortOption, sortOptionResult)
     }
 
     private fun withComposeRule(

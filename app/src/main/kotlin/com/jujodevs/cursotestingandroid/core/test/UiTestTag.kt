@@ -27,5 +27,5 @@ object UiTestTag {
 
     fun productListCategory(category: String?) = "product_list_category_${category ?: "all"}"
 
-    fun productListSortOption(sortOption: SortOption) = "product_list_category_${sortOption.name}"
+    fun productListSort(sortOption: SortOption) = "product_list_sort_option_${sortOption.name}"
 }
