@@ -121,4 +121,15 @@ class CartViewModelTest {
         assertTrue(updatedEvent is CartEvent.ShowMessage)
         event.cancelAndIgnoreRemainingEvents()
     }
+
+    @Test
+    fun `WHEN receive a go back action THEN emits a go back event`() = runTurbineTest {
+        val event = viewModel.events.testIn(this)
+
+        viewModel.onAction(CartAction.GoBack)
+
+        val updatedEvent = event.awaitItem()
+        assertTrue(updatedEvent is CartEvent.GoBack)
+        event.cancelAndIgnoreRemainingEvents()
+    }
 }

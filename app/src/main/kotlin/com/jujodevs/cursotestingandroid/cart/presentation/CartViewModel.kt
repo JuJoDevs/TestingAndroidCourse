@@ -59,6 +59,7 @@ class CartViewModel @Inject constructor(
 
     fun onAction(action: CartAction) {
         when (action) {
+            CartAction.GoBack -> goBack()
             CartAction.LoadCart -> refresh()
             is CartAction.UpdateCartItem -> updateCartItem(
                 productId = action.productId,
@@ -75,6 +76,12 @@ class CartViewModel @Inject constructor(
                 action.productId,
                 action.currentQuantity
             )
+        }
+    }
+
+    private fun goBack() {
+        viewModelScope.launch {
+            _events.emit(CartEvent.GoBack)
         }
     }
 

@@ -68,20 +68,34 @@ fun CartScreen(
 
     ObserveAsEvents(cartViewModel.events) { event ->
         when (event) {
+            is CartEvent.GoBack -> onBack()
             is CartEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
         }
     }
 
+    CartContent(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onAction = { cartViewModel.onAction(it) }
+    )
+}
+
+@Composable
+private fun CartContent(
+    uiState: CartUiState,
+    snackbarHostState: SnackbarHostState,
+    onAction: (CartAction) -> Unit
+) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             MarketTopAppBar(
                 title = "Carrito",
-                onBack = onBack,
+                onBack = { onAction(CartAction.GoBack) },
             )
         }
     ) { paddingValues ->
-        when (val state = uiState) {
+        when (uiState) {
             CartUiState.Loading -> {
                 CartLoadingStateScreen(
                     Modifier
@@ -92,8 +106,8 @@ fun CartScreen(
 
             is CartUiState.Error -> {
                 CartErrorStateScreen(
-                    state = state,
-                    onRetrySelected = { cartViewModel.onAction(CartAction.LoadCart) },
+                    state = uiState,
+                    onRetrySelected = { onAction(CartAction.LoadCart) },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -101,8 +115,8 @@ fun CartScreen(
             }
 
             is CartUiState.Success -> CartSuccessStateScreen(
-                state = state,
-                onAction = { cartViewModel.onAction(it) },
+                state = uiState,
+                onAction = onAction,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -210,7 +224,9 @@ fun CartSuccessStateScreen(
                     CartSummaryCard(
                         summary = state.summary,
                         currencyFormatter = currencyFormatter,
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                     )
                 }
             }
@@ -378,7 +394,9 @@ fun CartSummaryCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
