@@ -4,10 +4,13 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.apple
@@ -17,12 +20,15 @@ import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.coffee
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.milk
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.yogurt
 import com.jujodevs.cursotestingandroid.core.mothers.uistate.ProductListUiStateMother
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LIST
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LOADING
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.productListItem
 import com.jujodevs.cursotestingandroid.core.utils.getString
 import com.jujodevs.cursotestingandroid.core.utils.onListItemNodeWithTag
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -81,6 +87,72 @@ class ProductListScreenTest {
         createProductListScreen(uiState = ProductListUiStateMother.success.copy(products = emptyList()))
 
         onNodeWithText(getString(R.string.product_list_no_products, 6)).assertIsDisplayed()
+    }
+
+    @Test
+    fun givenNoCategorySelected_whenRendered_thenMarkAllChip() = withComposeRule {
+        createProductListScreen(ProductListUiStateMother.success.copy(selectedCategory = null))
+
+        onNodeWithTag(UiTestTag.productListCategory(null)).assertIsSelected()
+    }
+
+    @Test
+    fun givenCategorySelected_whenRendered_thenMarkThatChip() = withComposeRule {
+        val category = "drinks"
+        createProductListScreen(ProductListUiStateMother.success.copy(
+            categories = listOf("bread", "dairy", category),
+            selectedCategory = category,
+        ))
+
+        onNodeWithTag(UiTestTag.productListCategory("drinks")).assertIsSelected()
+    }
+
+    @Test
+    fun givenNotSortOptionSelected_whenRendered_thenNotMarkSorterChips() = withComposeRule {
+        createProductListScreen(
+            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE)
+        )
+
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+            .assertIsNotSelected()
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+            .assertIsNotSelected()
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+            .assertIsNotSelected()
+    }
+
+    @Test
+    fun givenSortOptionSelected_whenRendered_thenMarkChipWithSortOptionSelected() = withComposeRule {
+        createProductListScreen(
+            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.PRICE_ASC)
+        )
+
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+            .assertIsSelected()
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+            .assertIsNotSelected()
+        onNodeWithTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+            .assertIsNotSelected()
+    }
+
+    @Test
+    fun givenRendered_whenSelectSortOption_thenMarkChipWithSortOptionSelected() = withComposeRule {
+        val expectedSortOption = SortOption.DISCOUNT
+        var sortOptionResult:SortOption = SortOption.NONE
+
+        createProductListScreen(
+            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE),
+            onAction = {
+                if (it is ProductListAction.SetOrderSelected) {
+                    sortOptionResult = it.sortOption
+                }
+            }
+        )
+
+        onNodeWithTag(UiTestTag.productListSortOption(expectedSortOption))
+            .performClick()
+
+        assertEquals(expectedSortOption, sortOptionResult)
     }
 
     private fun withComposeRule(

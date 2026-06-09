@@ -22,7 +22,7 @@ object ProductListUiStateMother {
             ProductWithPromotion(yogurt, PromotionMother.buyXGetY()),
             ProductWithPromotion(chicken),
         ),
-        categories = listOf(bread.category, milk.category, coffee.category),
+        categories = setOf(bread.category, milk.category, coffee.category, apple.category, yogurt.category, chicken.category).toList(),
         selectedCategory = null,
         sortOption = SortOption.NONE,
     )

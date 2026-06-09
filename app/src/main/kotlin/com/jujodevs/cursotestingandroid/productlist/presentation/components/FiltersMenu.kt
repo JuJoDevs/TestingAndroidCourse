@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.jujodevs.cursotestingandroid.R
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
@@ -57,6 +58,7 @@ fun FiltersMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterChip(
+                    modifier = Modifier.testTag(UiTestTag.productListCategory(null)),
                     selected = state.selectedCategory == null,
                     onClick = { onAction(ProductListAction.SetCategory(null)) },
                     label = { Text(
@@ -66,6 +68,7 @@ fun FiltersMenu(
                 )
                 state.categories.forEach { category ->
                     FilterChip(
+                        modifier = Modifier.testTag(UiTestTag.productListCategory(category)),
                         selected = category.equals(
                             other = state.selectedCategory,
                             ignoreCase = true
@@ -96,21 +99,27 @@ fun FiltersMenu(
                     sortOption = SortOption.PRICE_ASC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .testTag(UiTestTag.productListSortOption(SortOption.PRICE_ASC))
+                        .weight(1f),
                 )
                 OrderFilterChip(
                     text = stringResource(R.string.filters_sort_price_desc),
                     sortOption = SortOption.PRICE_DESC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .testTag(UiTestTag.productListSortOption(SortOption.PRICE_DESC))
+                        .weight(1f),
                 )
                 OrderFilterChip(
                     text = stringResource(R.string.filters_sort_discount),
                     sortOption = SortOption.DISCOUNT,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .testTag(UiTestTag.productListSortOption(SortOption.DISCOUNT))
+                        .weight(1f),
                 )
             }
         }

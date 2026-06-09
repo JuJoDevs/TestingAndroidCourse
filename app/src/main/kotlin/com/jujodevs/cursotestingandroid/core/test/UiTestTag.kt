@@ -1,5 +1,7 @@
 package com.jujodevs.cursotestingandroid.core.test
 
+import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
+
 object UiTestTag {
 
     const val TOP_APP_BAR = "top_app_bar"
@@ -17,4 +19,8 @@ object UiTestTag {
     const val PRODUCT_LIST_LIST = "product_list_list"
 
     fun productListItem(productId: String) = "product_list_item_${productId}"
+
+    fun productListCategory(category: String?) = "product_list_category_${category ?: "all"}"
+
+    fun productListSortOption(sortOption: SortOption) = "product_list_category_${sortOption.name}"
 }
