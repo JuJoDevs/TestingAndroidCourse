@@ -43,17 +43,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.cart.domain.model.CartSummary
 import com.jujodevs.cursotestingandroid.cart.presentation.model.CartItemWithPromotion
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
 import com.jujodevs.cursotestingandroid.core.presentation.components.QuantitySelector
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_EMPTY
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_LOADING
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.CART_RETRY
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
 import java.text.NumberFormat
 import java.util.Currency
@@ -81,7 +87,7 @@ fun CartScreen(
 }
 
 @Composable
-private fun CartContent(
+internal fun CartContent(
     uiState: CartUiState,
     snackbarHostState: SnackbarHostState,
     onAction: (CartAction) -> Unit
@@ -90,7 +96,7 @@ private fun CartContent(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             MarketTopAppBar(
-                title = "Carrito",
+                title = stringResource(R.string.cart_title),
                 onBack = { onAction(CartAction.GoBack) },
             )
         }
@@ -131,7 +137,7 @@ private fun CartLoadingStateScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(modifier = Modifier.testTag(CART_LOADING))
     }
 }
 
@@ -147,15 +153,16 @@ private fun CartErrorStateScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Error: ${state.message}",
+            text = stringResource(R.string.cart_error_message, state.message),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
         )
         Spacer(Modifier.height(16.dp))
         Button(
+            modifier = Modifier.testTag(CART_RETRY),
             onClick = onRetrySelected
         ) {
-            Text(text = "Reintentar")
+            Text(text = stringResource(R.string.cart_retry))
         }
     }
 }
@@ -179,21 +186,21 @@ fun CartSuccessStateScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.testTag(CART_EMPTY).fillMaxSize(),
                 ) {
                     Spacer(Modifier.height(54.dp))
                     Text(
-                        text = "🛒",
+                        text = stringResource(R.string.cart_empty_icon),
                         style = MaterialTheme.typography.displayLarge,
                     )
                     Text(
-                        "Tu carrito está vacío",
+                        text = stringResource(R.string.cart_empty_title),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        "Agrega productos para comenzar",
+                        text = stringResource(R.string.cart_empty_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -276,7 +283,7 @@ fun CartItemCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Eliminar producto",
+                    contentDescription = stringResource(R.string.cart_delete_content_description),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
@@ -331,14 +338,20 @@ fun CartItemCard(
                                 textDecoration = TextDecoration.LineThrough,
                             )
                             Text(
-                                text = "${currencyFormatter.format(unitPrice)} c/u",
+                                text = stringResource(
+                                    R.string.cart_item_unit_price,
+                                    currencyFormatter.format(unitPrice)
+                                ),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
                         } else {
                             Text(
-                                text = "${currencyFormatter.format(unitPrice)} c/u",
+                                text = stringResource(
+                                    R.string.cart_item_unit_price,
+                                    currencyFormatter.format(unitPrice)
+                                ),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -346,7 +359,10 @@ fun CartItemCard(
                     }
 
                     Text(
-                        text = "Total: ${currencyFormatter.format(itemTotal)}",
+                        text = stringResource(
+                            R.string.cart_item_total_price,
+                            currencyFormatter.format(itemTotal)
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -400,7 +416,7 @@ fun CartSummaryCard(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Resumen del carrito",
+                text = stringResource(R.string.cart_summary_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontWeight = FontWeight.Bold,
@@ -411,7 +427,7 @@ fun CartSummaryCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Subtotal",
+                    text = stringResource(R.string.cart_summary_subtotal),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
@@ -428,7 +444,7 @@ fun CartSummaryCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Descuento",
+                        text = stringResource(R.string.cart_summary_discount),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -450,7 +466,7 @@ fun CartSummaryCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Total",
+                    text = stringResource(R.string.cart_summary_total),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontWeight = FontWeight.Bold,

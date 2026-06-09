@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.domain.model.ThemeMode
+import com.jujodevs.cursotestingandroid.core.presentation.ComposeTest
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.SETTINGS_CONTENT
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.SETTINGS_IN_STOCK_SWITCH
@@ -25,9 +26,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SettingsScreenTest {
-    @get:Rule
-    val composeRule = createAndroidComposeRule<ComponentActivity>()
+class SettingsScreenTest: ComposeTest() {
 
     private fun createSettingsScreen(
         uiState: SettingsUiState = SettingsUiState(),
@@ -144,8 +143,4 @@ class SettingsScreenTest {
             emitted,
         )
     }
-
-    private fun withComposeRule(
-        block: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>.() -> Unit,
-    ): Unit = block(composeRule)
 }

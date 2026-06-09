@@ -35,4 +35,18 @@
 
     <string name="product_item_old_price">Antes</string>
     <string name="product_item_new_price">Ahora</string>
+
+    <string name="cart_title">Carrito</string>
+    <string name="cart_error_message">Error: %s</string>
+    <string name="cart_retry">Reintentar</string>
+    <string name="cart_empty_icon">🛒</string>
+    <string name="cart_empty_title">Tu carrito está vacío</string>
+    <string name="cart_empty_subtitle">Agrega productos para comenzar</string>
+    <string name="cart_delete_content_description">Eliminar producto</string>
+    <string name="cart_item_unit_price">%s c/u</string>
+    <string name="cart_item_total_price">Total: %s</string>
+    <string name="cart_summary_title">Resumen del carrito</string>
+    <string name="cart_summary_subtotal">Subtotal</string>
+    <string name="cart_summary_discount">Descuento</string>
+    <string name="cart_summary_total">Total</string>
 </resources>

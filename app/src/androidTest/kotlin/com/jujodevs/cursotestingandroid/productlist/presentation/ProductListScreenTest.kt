@@ -20,6 +20,7 @@ import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.coffee
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.milk
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.yogurt
 import com.jujodevs.cursotestingandroid.core.mothers.uistate.ProductListUiStateMother
+import com.jujodevs.cursotestingandroid.core.presentation.ComposeTest
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LIST
@@ -37,10 +38,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class ProductListScreenTest {
-
-    @get:Rule
-    val composeRule = createAndroidComposeRule<ComponentActivity>()
+class ProductListScreenTest: ComposeTest() {
 
     private fun createProductListScreen(
         uiState: ProductListUiState = ProductListUiStateMother.success,
@@ -286,8 +284,4 @@ class ProductListScreenTest {
 
         assertEquals(expectedSortOption, sortOptionResult)
     }
-
-    private fun withComposeRule(
-        block: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>.() -> Unit,
-    ): Unit = block(composeRule)
 }
