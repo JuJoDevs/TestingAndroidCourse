@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BADGE
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_CART
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_FILTER
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_SETTINGS
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListAction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +53,7 @@ fun HomeTopAppBar(
         ),
         actions = {
             IconButton(
+                modifier = Modifier.testTag(TOP_APP_BAR_FILTER),
                 onClick = { onAction(ProductListAction.SetFiltersVisible(!filterVisible)) }
             ) {
                 Icon(
@@ -62,6 +66,7 @@ fun HomeTopAppBar(
                 )
             }
             IconButton(
+                modifier = Modifier.testTag(TOP_APP_BAR_SETTINGS),
                 onClick = { onAction(ProductListAction.NavToSettings) }
             ) {
                 Icon(
@@ -90,6 +95,7 @@ fun HomeTopAppBar(
                 }
             ) {
                 IconButton(
+                    modifier = Modifier.testTag(TOP_APP_BAR_CART),
                     onClick = { onAction(ProductListAction.NavToCart) }
                 ) {
                     Icon(

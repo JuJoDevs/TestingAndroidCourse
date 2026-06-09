@@ -4,7 +4,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -26,6 +25,9 @@ import com.jujodevs.cursotestingandroid.core.test.UiTestTag.FILTER_VIEW
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LIST
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_LIST_LOADING
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BADGE
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_CART
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_FILTER
+import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_SETTINGS
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.productListItem
 import com.jujodevs.cursotestingandroid.core.utils.getString
 import com.jujodevs.cursotestingandroid.core.utils.onListItemNodeWithTag
@@ -33,6 +35,7 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class ProductListScreenTest {
 
@@ -186,6 +189,68 @@ class ProductListScreenTest {
 
         onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
         onNodeWithText(getString(R.string.top_app_bar_badge_ninety_nine_plus)).assertIsDisplayed()
+    }
+
+    @Test
+    fun givenFilterVisible_whenToggleClicked_thenEmitFalse() = withComposeRule {
+        var emitted: Boolean? = null
+        createProductListScreen(
+            filterVisible = true,
+            onAction = {
+                if (it is ProductListAction.SetFiltersVisible) {
+                    emitted = it.showFilters
+                }
+            }
+        )
+
+        onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
+
+        assertEquals(false, emitted)
+    }
+
+    @Test
+    fun givenFilterHidden_whenToggleClicked_thenEmitTrue() = withComposeRule {
+        var emitted: Boolean? = null
+        createProductListScreen(
+            filterVisible = false,
+            onAction = {
+                if (it is ProductListAction.SetFiltersVisible) {
+                    emitted = it.showFilters
+                }
+            }
+        )
+
+        onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
+
+        assertEquals(true, emitted)
+    }
+
+    @Test
+    fun givenProductListRendered_whenSettingsIconClicked_thenEmitCallback() = withComposeRule {
+        var settingClicked = false
+        createProductListScreen(
+            onAction = {
+                if (it is ProductListAction.NavToSettings) settingClicked = true
+            }
+        )
+
+        onNodeWithTag(TOP_APP_BAR_SETTINGS).performClick()
+
+        assertTrue(settingClicked)
+    }
+
+    @Test
+    fun givenProductListRendered_whenCartIconClicked_thenEmitCallback() = withComposeRule {
+        var cartClicked = false
+        createProductListScreen(
+            onAction = {
+                if (it is ProductListAction.NavToCart) cartClicked = true
+            }
+        )
+
+        onNodeWithTag(TOP_APP_BAR_CART).performClick()
+
+        assertTrue(cartClicked)
     }
 
     private fun withComposeRule(
