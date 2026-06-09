@@ -25,19 +25,20 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.presentation.components.MarketTopAppBar
 import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
 import com.jujodevs.cursotestingandroid.detail.presentation.components.AddToCartButton
@@ -55,31 +56,53 @@ fun ProductDetailScreen(
     val uiState by productDetailViewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val insufficientStockMsg = stringResource(R.string.product_detail_insufficient_stock)
+    val networkErrorMsg = stringResource(R.string.product_detail_network_error)
+    val unknownErrorMsg = stringResource(R.string.product_detail_unknown_error)
+    val successAddToCartMsg = stringResource(R.string.product_detail_success_add_to_cart)
+
     ObserveAsEvents(productDetailViewModel.events) { event ->
         when (event) {
+            ProductDetailEvent.GoBack -> onBack()
+
             ProductDetailEvent.InsufficientStockError -> {
-                snackbarHostState.showSnackbar("No hay suficiente stock")
+                snackbarHostState.showSnackbar(insufficientStockMsg)
             }
 
             ProductDetailEvent.NetworkError -> {
-                snackbarHostState.showSnackbar("No hay internet compruebe su conexión")
+                snackbarHostState.showSnackbar(networkErrorMsg)
             }
 
             ProductDetailEvent.UnknownError -> {
-                snackbarHostState.showSnackbar("Error inesperado, vuelva a intentarlo")
+                snackbarHostState.showSnackbar(unknownErrorMsg)
             }
 
             ProductDetailEvent.SuccessAddToCart -> {
-                snackbarHostState.showSnackbar("Producto añadido al carrito")
+                snackbarHostState.showSnackbar(successAddToCartMsg)
             }
         }
     }
 
+    ProductDetailContain(
+        uiState = uiState,
+        snackbarHostState = snackbarHostState,
+        onAction = { action ->
+            productDetailViewModel.onAction(action)
+        }
+    )
+}
+
+@Composable
+internal fun ProductDetailContain(
+    uiState: ProductDetailUiState,
+    snackbarHostState: SnackbarHostState,
+    onAction: (ProductDetailAction) -> Unit,
+) {
     Scaffold(
         topBar = {
             MarketTopAppBar(
                 title = uiState.item?.product?.name.orEmpty(),
-                onBack = { onBack() }
+                onBack = { onAction(ProductDetailAction.GoBack) }
             )
         },
         bottomBar = {
@@ -87,7 +110,7 @@ fun ProductDetailScreen(
                 AddToCartButton(
                     product = uiState.item?.product,
                     isLoading = uiState.isLoading,
-                    addToCart = { productDetailViewModel.onAction(ProductDetailAction.AddToCart) }
+                    addToCart = { onAction(ProductDetailAction.AddToCart) }
                 )
             }
         },
@@ -196,7 +219,11 @@ fun ProductDetailScreen(
                                         color = MaterialTheme.colorScheme.errorContainer,
                                     ) {
                                         Text(
-                                            text = "${(promotion as? ProductPromotion.Percent)?.percent?.toInt() ?: ""}% OFF",
+                                            text = stringResource(
+                                                R.string.product_detail_percent_off,
+                                                (promotion as? ProductPromotion.Percent)?.percent?.toInt()
+                                                    ?: 0
+                                            ),
                                             modifier = Modifier.padding(
                                                 horizontal = 12.dp,
                                                 vertical = 6.dp
@@ -220,7 +247,10 @@ fun ProductDetailScreen(
                                         color = MaterialTheme.colorScheme.errorContainer,
                                     ) {
                                         Text(
-                                            text = "PROMO: ${promotion.label}",
+                                            text = stringResource(
+                                                R.string.product_detail_promo,
+                                                promotion.label
+                                            ),
                                             modifier = Modifier.padding(
                                                 horizontal = 12.dp,
                                                 vertical = 6.dp
@@ -248,7 +278,7 @@ fun ProductDetailScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Text(
-                                        text = "Stock disponible",
+                                        text = stringResource(R.string.product_detail_stock_available),
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -259,8 +289,11 @@ fun ProductDetailScreen(
                                     ) {
                                         Text(
                                             text =
-                                                if (hasStock) "${product.stock} unidades"
-                                                else "Sin stock",
+                                                if (hasStock) stringResource(
+                                                    R.string.product_detail_stock_units,
+                                                    product.stock
+                                                )
+                                                else stringResource(R.string.product_detail_no_stock),
                                             modifier =
                                                 Modifier.padding(
                                                     horizontal = 12.dp,

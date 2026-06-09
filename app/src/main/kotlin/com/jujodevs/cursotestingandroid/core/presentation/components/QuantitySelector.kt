@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jujodevs.cursotestingandroid.R
 
 @Composable
 fun QuantitySelector(
@@ -45,7 +47,7 @@ fun QuantitySelector(
         ) {
             Icon(
                 imageVector = Icons.Default.Remove,
-                contentDescription = "Decrement quantity",
+                contentDescription = stringResource(R.string.quantity_selector_decrease),
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -74,7 +76,7 @@ fun QuantitySelector(
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Increment quantity",
+                contentDescription = stringResource(R.string.quantity_selector_increase),
                 modifier = Modifier.size(20.dp)
             )
         }

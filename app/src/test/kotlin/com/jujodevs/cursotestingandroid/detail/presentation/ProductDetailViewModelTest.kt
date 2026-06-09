@@ -122,4 +122,17 @@ class ProductDetailViewModelTest {
         state.cancelAndIgnoreRemainingEvents()
         events.cancelAndIgnoreRemainingEvents()
     }
+
+    @Test
+    fun `WHEN go back action is received THEN try emit go back event`() = runTurbineTest{
+        val productId = "product-1"
+        val viewModel = createViewModel(productId)
+        val events = viewModel.events.testIn(this)
+
+        viewModel.onAction(ProductDetailAction.GoBack)
+
+        val event = events.awaitItem()
+        assertEquals(ProductDetailEvent.GoBack, event)
+        events.cancelAndIgnoreRemainingEvents()
+    }
 }

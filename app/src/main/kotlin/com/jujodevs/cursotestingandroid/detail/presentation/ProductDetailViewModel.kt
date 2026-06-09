@@ -58,6 +58,7 @@ class ProductDetailViewModel @AssistedInject constructor(
 
     fun onAction(action: ProductDetailAction) {
         when (action) {
+            ProductDetailAction.GoBack -> goBack()
             ProductDetailAction.AddToCart -> addToCart()
         }
     }
@@ -76,6 +77,12 @@ class ProductDetailViewModel @AssistedInject constructor(
                 else handleError(UnknownError(e.message))
                 emit(ProductDetailUiState(isLoading = false,))
             }
+
+    private fun goBack() {
+        viewModelScope.launch {
+            _events.tryEmit(ProductDetailEvent.GoBack)
+        }
+    }
 
     private fun addToCart() {
         val product = uiState.value.item?.product?.id ?: return
