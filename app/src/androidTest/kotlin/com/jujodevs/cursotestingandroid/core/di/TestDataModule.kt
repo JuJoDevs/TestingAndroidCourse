@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.jujodevs.cursotestingandroid.cart.data.local.database.dao.CartDao
@@ -40,52 +39,42 @@ import javax.inject.Singleton
 object TestDataModule {
     @Provides
     @Singleton
-    fun provideDispatchersProvider(
-        defaultDispatchersProvider: DefaultDispatchersProvider
-    ): DispatchersProvider = defaultDispatchersProvider
+    fun provideDispatchersProvider(defaultDispatchersProvider: DefaultDispatchersProvider): DispatchersProvider =
+        defaultDispatchersProvider
 
     @Provides
-    fun providesProductDao(database: MiniMarketDatabase): ProductDao {
-        return database.productDao()
-    }
+    fun providesProductDao(database: MiniMarketDatabase): ProductDao = database.productDao()
 
     @Provides
-    fun providesPromotionDao(database: MiniMarketDatabase): PromotionDao {
-        return database.promotionDao()
-    }
+    fun providesPromotionDao(database: MiniMarketDatabase): PromotionDao = database.promotionDao()
 
     @Provides
-    fun providesCartDao(database: MiniMarketDatabase): CartDao {
-        return database.cartDao()
-    }
+    fun providesCartDao(database: MiniMarketDatabase): CartDao = database.cartDao()
 
     @Provides
     @Singleton
-    fun providesDatabase():MiniMarketDatabase{
+    fun providesDatabase(): MiniMarketDatabase {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        return Room.inMemoryDatabaseBuilder(
-            context,
-            MiniMarketDatabase::class.java
-        ).build()
+        return Room
+            .inMemoryDatabaseBuilder(
+                context,
+                MiniMarketDatabase::class.java,
+            ).build()
     }
 
     @Provides
     @Singleton
-    fun providesProductRepository(
-        productRepositoryImpl: ProductRepositoryImpl
-    ): ProductRepository = productRepositoryImpl
+    fun providesProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository =
+        productRepositoryImpl
 
     @Provides
     @Singleton
-    fun providesPromotionRepository(
-        promotionRepositoryImpl: PromotionRepositoryImpl
-    ): PromotionRepository = promotionRepositoryImpl
+    fun providesPromotionRepository(promotionRepositoryImpl: PromotionRepositoryImpl): PromotionRepository =
+        promotionRepositoryImpl
 
     @Provides
     @Singleton
-    fun providesCartRepository(
-        cartRepositoryImpl: CartRepositoryImpl
-    ): CartRepository = cartRepositoryImpl
+    fun providesCartRepository(cartRepositoryImpl: CartRepositoryImpl): CartRepository = cartRepositoryImpl
 
     @Provides
     @Singleton
@@ -101,9 +90,8 @@ object TestDataModule {
     }
 
     @Provides
-    fun providesSettingsRepository(
-        settingsRepositoryImpl: SettingsRepositoryImpl
-    ): SettingsRepository = settingsRepositoryImpl
+    fun providesSettingsRepository(settingsRepositoryImpl: SettingsRepositoryImpl): SettingsRepository =
+        settingsRepositoryImpl
 
     @Provides
     @Singleton

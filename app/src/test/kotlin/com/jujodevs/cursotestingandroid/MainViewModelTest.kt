@@ -10,7 +10,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class MainViewModelTest {
-
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     lateinit var settingsRepository: FakeSettingsRepository
@@ -24,23 +23,25 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `GIVEN repository with dark mode WHEN initialized THEN emits dark theme mode`() = runTurbineTest {
-        settingsRepository.setThemeMode(ThemeMode.DARK)
-        val state = viewModel.themeMode.testIn(this)
+    fun `GIVEN repository with dark mode WHEN initialized THEN emits dark theme mode`() =
+        runTurbineTest {
+            settingsRepository.setThemeMode(ThemeMode.DARK)
+            val state = viewModel.themeMode.testIn(this)
 
-        val updatedState = state.awaitItem()
+            val updatedState = state.awaitItem()
 
-        assertEquals(ThemeMode.DARK, updatedState)
-        state.cancelAndIgnoreRemainingEvents()
-    }
+            assertEquals(ThemeMode.DARK, updatedState)
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
     @Test
-    fun `GIVEN default repository WHEN initialized THEN system theme mode`() = runTurbineTest {
-        val state = viewModel.themeMode.testIn(this)
+    fun `GIVEN default repository WHEN initialized THEN system theme mode`() =
+        runTurbineTest {
+            val state = viewModel.themeMode.testIn(this)
 
-        val updatedState = state.awaitItem()
+            val updatedState = state.awaitItem()
 
-        assertEquals(ThemeMode.SYSTEM, updatedState)
-        state.cancelAndIgnoreRemainingEvents()
-    }
+            assertEquals(ThemeMode.SYSTEM, updatedState)
+            state.cancelAndIgnoreRemainingEvents()
+        }
 }

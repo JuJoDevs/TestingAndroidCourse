@@ -22,6 +22,7 @@ import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)
 class SettingsRepositoryImplTest {
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
+
     @get:Rule val hiltRule = HiltAndroidRule(this)
 
     @Inject lateinit var settingsRepository: SettingsRepository
@@ -32,64 +33,70 @@ class SettingsRepositoryImplTest {
     }
 
     @Test
-    fun givenNoDataSaved_whenInStockOnlyIsRead_thenReturnsDefaultFalse() = runTest {
-        val result = settingsRepository.inStockOnly.first()
+    fun givenNoDataSaved_whenInStockOnlyIsRead_thenReturnsDefaultFalse() =
+        runTest {
+            val result = settingsRepository.inStockOnly.first()
 
-        assertEquals(false, result)
-    }
-
-    @Test
-    fun givenNoDataSaved_whenFilterVisibleIsRead_thenReturnsDefaultTrue() = runTest {
-        val result = settingsRepository.filtersVisible.first()
-
-        assertEquals(true, result)
-    }
-
-    @Test
-    fun givenNoDataSaved_whenSelectedCategoryIsRead_thenReturnsDefaultNull() = runTest {
-        val result = settingsRepository.selectedCategory.first()
-
-        assertNull(result)
-    }
-
-    @Test
-    fun givenNoDataSaved_whenThemeModeIsRead_thenReturnsDefaultSystem() = runTest {
-        val result = settingsRepository.themeMode.first()
-
-        assertEquals(ThemeMode.SYSTEM, result)
-    }
-
-    @Test
-    fun givenNoDataSaved_whenSortOptionIsRead_thenReturnsDefaultNone() = runTest {
-        val result = settingsRepository.sortOption.first()
-
-        assertEquals(SortOption.NONE, result)
-    }
-
-    @Test
-    fun givenRepository_whenSetFilterVisibleToFalse_thenPersistValue() = runTest {
-        settingsRepository.setFiltersVisible(false)
-
-        val result = settingsRepository.filtersVisible.first()
-
-        assertEquals(false, result)
-    }
-
-    @Test
-    fun givenMultipleSettingsChanges_whenReadAll_thenStateIsConsistent() = runTest {
-        with(settingsRepository) {
-            setFiltersVisible(false)
-            setInStockOnly(true)
-            setSortOption(SortOption.DISCOUNT)
-            setThemeMode(ThemeMode.DARK)
-            setSelectedCategory("Electronics")
-
-            assertTrue(!filtersVisible.first())
-            assertTrue(inStockOnly.first())
-            assertTrue(sortOption.first() == SortOption.DISCOUNT)
-            assertTrue(themeMode.first() == ThemeMode.DARK)
-            assertTrue(selectedCategory.first() == "Electronics")
+            assertEquals(false, result)
         }
 
-    }
+    @Test
+    fun givenNoDataSaved_whenFilterVisibleIsRead_thenReturnsDefaultTrue() =
+        runTest {
+            val result = settingsRepository.filtersVisible.first()
+
+            assertEquals(true, result)
+        }
+
+    @Test
+    fun givenNoDataSaved_whenSelectedCategoryIsRead_thenReturnsDefaultNull() =
+        runTest {
+            val result = settingsRepository.selectedCategory.first()
+
+            assertNull(result)
+        }
+
+    @Test
+    fun givenNoDataSaved_whenThemeModeIsRead_thenReturnsDefaultSystem() =
+        runTest {
+            val result = settingsRepository.themeMode.first()
+
+            assertEquals(ThemeMode.SYSTEM, result)
+        }
+
+    @Test
+    fun givenNoDataSaved_whenSortOptionIsRead_thenReturnsDefaultNone() =
+        runTest {
+            val result = settingsRepository.sortOption.first()
+
+            assertEquals(SortOption.NONE, result)
+        }
+
+    @Test
+    fun givenRepository_whenSetFilterVisibleToFalse_thenPersistValue() =
+        runTest {
+            settingsRepository.setFiltersVisible(false)
+
+            val result = settingsRepository.filtersVisible.first()
+
+            assertEquals(false, result)
+        }
+
+    @Test
+    fun givenMultipleSettingsChanges_whenReadAll_thenStateIsConsistent() =
+        runTest {
+            with(settingsRepository) {
+                setFiltersVisible(false)
+                setInStockOnly(true)
+                setSortOption(SortOption.DISCOUNT)
+                setThemeMode(ThemeMode.DARK)
+                setSelectedCategory("Electronics")
+
+                assertTrue(!filtersVisible.first())
+                assertTrue(inStockOnly.first())
+                assertTrue(sortOption.first() == SortOption.DISCOUNT)
+                assertTrue(themeMode.first() == ThemeMode.DARK)
+                assertTrue(selectedCategory.first() == "Electronics")
+            }
+        }
 }

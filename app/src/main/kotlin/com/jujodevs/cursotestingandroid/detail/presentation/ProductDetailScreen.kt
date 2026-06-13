@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -44,7 +45,6 @@ import com.jujodevs.cursotestingandroid.core.presentation.ui.ObserveAsEvents
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.PRODUCT_DETAIL_LOADING
 import com.jujodevs.cursotestingandroid.detail.presentation.components.AddToCartButton
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotion
-import androidx.compose.ui.platform.testTag
 
 @Composable
 fun ProductDetailScreen(
@@ -52,7 +52,7 @@ fun ProductDetailScreen(
     onBack: () -> Unit,
     productDetailViewModel: ProductDetailViewModel =
         hiltViewModel<ProductDetailViewModel, ProductDetailViewModel.Factory>(
-            creationCallback = { factory -> factory.create(productId) }
+            creationCallback = { factory -> factory.create(productId) },
         ),
 ) {
     val uiState by productDetailViewModel.uiState.collectAsStateWithLifecycle()
@@ -90,7 +90,7 @@ fun ProductDetailScreen(
         snackbarHostState = snackbarHostState,
         onAction = { action ->
             productDetailViewModel.onAction(action)
-        }
+        },
     )
 }
 
@@ -103,8 +103,12 @@ internal fun ProductDetailContain(
     Scaffold(
         topBar = {
             MarketTopAppBar(
-                title = uiState.item?.product?.name.orEmpty(),
-                onBack = { onAction(ProductDetailAction.GoBack) }
+                title =
+                    uiState.item
+                        ?.product
+                        ?.name
+                        .orEmpty(),
+                onBack = { onAction(ProductDetailAction.GoBack) },
             )
         },
         bottomBar = {
@@ -112,22 +116,24 @@ internal fun ProductDetailContain(
                 AddToCartButton(
                     product = uiState.item?.product,
                     isLoading = uiState.isLoading,
-                    addToCart = { onAction(ProductDetailAction.AddToCart) }
+                    addToCart = { onAction(ProductDetailAction.AddToCart) },
                 )
             }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             if (uiState.isLoading) {
                 Box(
-                    Modifier.fillMaxSize()
+                    Modifier
+                        .fillMaxSize()
                         .testTag(PRODUCT_DETAIL_LOADING),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
@@ -135,28 +141,30 @@ internal fun ProductDetailContain(
                 uiState.item?.let {
                     val product = it.product
                     val promotion = it.promotion
-                    val discountedPrice = when (promotion) {
-                        is ProductPromotion.Percent -> promotion.discountedPrice
-                        is ProductPromotion.BuyXPayY -> null
-                        null -> null
-                    }
+                    val discountedPrice =
+                        when (promotion) {
+                            is ProductPromotion.Percent -> promotion.discountedPrice
+                            is ProductPromotion.BuyXPayY -> null
+                            null -> null
+                        }
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         ) {
                             Column(
                                 modifier = Modifier.padding(24.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 AsyncImage(
                                     model = product.imageUrl,
@@ -179,10 +187,11 @@ internal fun ProductDetailContain(
                                 ) {
                                     Text(
                                         text = product.category,
-                                        modifier = Modifier.padding(
-                                            horizontal = 12.dp,
-                                            vertical = 6.dp
-                                        ),
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = 12.dp,
+                                                vertical = 6.dp,
+                                            ),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                                     )
@@ -222,15 +231,17 @@ internal fun ProductDetailContain(
                                         color = MaterialTheme.colorScheme.errorContainer,
                                     ) {
                                         Text(
-                                            text = stringResource(
-                                                R.string.product_detail_percent_off,
-                                                (promotion as? ProductPromotion.Percent)?.percent?.toInt()
-                                                    ?: 0
-                                            ),
-                                            modifier = Modifier.padding(
-                                                horizontal = 12.dp,
-                                                vertical = 6.dp
-                                            ),
+                                            text =
+                                                stringResource(
+                                                    R.string.product_detail_percent_off,
+                                                    (promotion as? ProductPromotion.Percent)?.percent?.toInt()
+                                                        ?: 0,
+                                                ),
+                                            modifier =
+                                                Modifier.padding(
+                                                    horizontal = 12.dp,
+                                                    vertical = 6.dp,
+                                                ),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onErrorContainer,
@@ -250,14 +261,16 @@ internal fun ProductDetailContain(
                                         color = MaterialTheme.colorScheme.errorContainer,
                                     ) {
                                         Text(
-                                            text = stringResource(
-                                                R.string.product_detail_promo,
-                                                promotion.label
-                                            ),
-                                            modifier = Modifier.padding(
-                                                horizontal = 12.dp,
-                                                vertical = 6.dp
-                                            ),
+                                            text =
+                                                stringResource(
+                                                    R.string.product_detail_promo,
+                                                    promotion.label,
+                                                ),
+                                            modifier =
+                                                Modifier.padding(
+                                                    horizontal = 12.dp,
+                                                    vertical = 6.dp,
+                                                ),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onErrorContainer,
@@ -269,11 +282,17 @@ internal fun ProductDetailContain(
 
                                 val hasStock = product.stock > 0
                                 val stockContainerColor =
-                                    if (hasStock) MaterialTheme.colorScheme.primaryContainer
-                                    else MaterialTheme.colorScheme.errorContainer
+                                    if (hasStock) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.errorContainer
+                                    }
                                 val stockContentColor =
-                                    if (hasStock) MaterialTheme.colorScheme.onPrimaryContainer
-                                    else MaterialTheme.colorScheme.onErrorContainer
+                                    if (hasStock) {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onErrorContainer
+                                    }
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -283,7 +302,7 @@ internal fun ProductDetailContain(
                                     Text(
                                         text = stringResource(R.string.product_detail_stock_available),
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
 
                                     Surface(
@@ -292,15 +311,18 @@ internal fun ProductDetailContain(
                                     ) {
                                         Text(
                                             text =
-                                                if (hasStock) stringResource(
-                                                    R.string.product_detail_stock_units,
-                                                    product.stock
-                                                )
-                                                else stringResource(R.string.product_detail_no_stock),
+                                                if (hasStock) {
+                                                    stringResource(
+                                                        R.string.product_detail_stock_units,
+                                                        product.stock,
+                                                    )
+                                                } else {
+                                                    stringResource(R.string.product_detail_no_stock)
+                                                },
                                             modifier =
                                                 Modifier.padding(
                                                     horizontal = 12.dp,
-                                                    vertical = 6.dp
+                                                    vertical = 6.dp,
                                                 ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold,

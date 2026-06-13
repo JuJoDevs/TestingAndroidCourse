@@ -18,8 +18,10 @@ import com.jujodevs.cursotestingandroid.productlist.data.local.database.entity.P
     version = 1,
     exportSchema = true,
 )
-abstract class MiniMarketDatabase: RoomDatabase() {
+abstract class MiniMarketDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
+
     abstract fun promotionDao(): PromotionDao
+
     abstract fun cartDao(): CartDao
 }

@@ -41,20 +41,22 @@ fun QuantitySelector(
     ) {
         IconButton(
             onClick = onDecreaseClick,
-            modifier = Modifier.size(36.dp)
-                .then(decreaseTestTag?.let { Modifier.testTag(it) } ?: Modifier),
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .then(decreaseTestTag?.let { Modifier.testTag(it) } ?: Modifier),
             enabled = canDecrease,
         ) {
             Icon(
                 imageVector = Icons.Default.Remove,
                 contentDescription = stringResource(R.string.quantity_selector_decrease),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
         Surface(
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primaryContainer,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -69,15 +71,16 @@ fun QuantitySelector(
         }
         IconButton(
             onClick = onIncreaseClick,
-            modifier = Modifier
-                .size(36.dp)
-                .then(increaseTestTag?.let { Modifier.testTag(it) } ?: Modifier),
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .then(increaseTestTag?.let { Modifier.testTag(it) } ?: Modifier),
             enabled = canIncrease,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(R.string.quantity_selector_increase),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
         }
     }

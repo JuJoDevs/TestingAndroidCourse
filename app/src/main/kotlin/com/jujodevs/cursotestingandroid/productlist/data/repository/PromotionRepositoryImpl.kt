@@ -21,47 +21,53 @@ import javax.inject.Inject
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
-class PromotionRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource,
-    private val dispatchers: DispatchersProvider,
-    private val json: Json,
-): PromotionRepository {
+class PromotionRepositoryImpl
+    @Inject
+    constructor(
+        private val remoteDataSource: RemoteDataSource,
+        private val localDataSource: LocalDataSource,
+        private val dispatchers: DispatchersProvider,
+        private val json: Json,
+    ) : PromotionRepository {
+        private val refreshScope = CoroutineScope(SupervisorJob() + dispatchers.io)
 
-    private val refreshScope = CoroutineScope(SupervisorJob() + dispatchers.io)
-    @OptIn(ExperimentalAtomicApi::class)
-    private val isRefreshing = AtomicBoolean(false)
+        @OptIn(ExperimentalAtomicApi::class)
+        private val isRefreshing = AtomicBoolean(false)
 
-    @OptIn(ExperimentalAtomicApi::class)
-    override fun getActivePromotions(): Flow<List<Promotion>> {
-        return localDataSource.getAllPromotions()
-            .map { entities -> entities.mapNotNull { entity -> entity.toDomain(json) } }
-            .onStart {
-                if (!isRefreshing.compareAndSet(
-                        expectedValue = false,
-                        newValue = true
-                    )) return@onStart
-
-                refreshScope.launch {
-                    try {
-                        refreshPromotions()
-                    } catch (e: Exception) {
-                        coroutineContext.ensureActive()
-                        // refresh log
-                    } finally {
-                        isRefreshing.store(false)
+        @OptIn(ExperimentalAtomicApi::class)
+        override fun getActivePromotions(): Flow<List<Promotion>> {
+            return localDataSource
+                .getAllPromotions()
+                .map { entities -> entities.mapNotNull { entity -> entity.toDomain(json) } }
+                .onStart {
+                    if (!isRefreshing.compareAndSet(
+                            expectedValue = false,
+                            newValue = true,
+                        )
+                    ) {
+                        return@onStart
                     }
-                }
-            }.catch {
-                // Important log
-            }
-    }
 
-    override suspend fun refreshPromotions() {
-        withContext(dispatchers.io) {
-            val promotions = remoteDataSource.getPromotions().getOrThrow()
-            val promotionsEntity = promotions.mapNotNull { it.toEntity(json) }
-            localDataSource.savePromotions(promotionsEntity)
+                    refreshScope.launch {
+                        try {
+                            refreshPromotions()
+                        } catch (e: Exception) {
+                            coroutineContext.ensureActive()
+                            // refresh log
+                        } finally {
+                            isRefreshing.store(false)
+                        }
+                    }
+                }.catch {
+                    // Important log
+                }
+        }
+
+        override suspend fun refreshPromotions() {
+            withContext(dispatchers.io) {
+                val promotions = remoteDataSource.getPromotions().getOrThrow()
+                val promotionsEntity = promotions.mapNotNull { it.toEntity(json) }
+                localDataSource.savePromotions(promotionsEntity)
+            }
         }
     }
-}

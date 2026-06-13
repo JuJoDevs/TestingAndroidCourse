@@ -6,22 +6,27 @@ import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRep
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
-class AddToCartUseCase @Inject constructor(
-    private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
-) {
+class AddToCartUseCase
+    @Inject
+    constructor(
+        private val cartRepository: CartRepository,
+        private val productRepository: ProductRepository,
+    ) {
+        suspend operator fun invoke(
+            productId: String,
+            quantity: Int = 1,
+        ) {
+            if (quantity <= 0) throw AppError.Validation.QuantityMustBePositive
 
-    suspend operator fun invoke(productId: String, quantity: Int = 1) {
-        if (quantity <= 0) throw AppError.Validation.QuantityMustBePositive
+            val product =
+                productRepository.getProductById(productId).firstOrNull()
+                    ?: throw AppError.NotFoundError
 
-        val product = productRepository.getProductById(productId).firstOrNull()
-            ?: throw AppError.NotFoundError
+            val existingItem = cartRepository.getCartItemById(productId)
+            val newQuantity = (existingItem?.quantity ?: 0) + quantity
 
-        val existingItem = cartRepository.getCartItemById(productId)
-        val newQuantity = (existingItem?.quantity ?: 0) + quantity
+            if (newQuantity > product.stock) throw AppError.Validation.InsufficientStock(product.stock)
 
-        if (newQuantity > product.stock) throw AppError.Validation.InsufficientStock(product.stock)
-
-        cartRepository.addToCart(productId, quantity)
+            cartRepository.addToCart(productId, quantity)
+        }
     }
-}

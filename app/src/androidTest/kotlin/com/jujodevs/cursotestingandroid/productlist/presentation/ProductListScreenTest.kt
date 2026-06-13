@@ -1,17 +1,13 @@
 package com.jujodevs.cursotestingandroid.productlist.presentation
 
-import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.jujodevs.cursotestingandroid.R
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.apple
 import com.jujodevs.cursotestingandroid.core.mothers.ProductMother.bread
@@ -34,12 +30,10 @@ import com.jujodevs.cursotestingandroid.core.utils.getString
 import com.jujodevs.cursotestingandroid.core.utils.onListItemNodeWithTag
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 import org.junit.Assert.assertEquals
-import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class ProductListScreenTest: ComposeTest() {
-
+class ProductListScreenTest : ComposeTest() {
     private fun createProductListScreen(
         uiState: ProductListUiState = ProductListUiStateMother.success,
         cartItemCount: Int = 0,
@@ -52,236 +46,257 @@ class ProductListScreenTest: ComposeTest() {
                 cartItemCount = cartItemCount,
                 filterVisible = filterVisible,
                 snackbarHostState = remember { SnackbarHostState() },
-                onAction = onAction
+                onAction = onAction,
             )
         }
     }
 
     @Test
-    fun givenLoadingState_whenRendered_thenShowLoading() = withComposeRule {
-        createProductListScreen(uiState = ProductListUiState.Loading)
+    fun givenLoadingState_whenRendered_thenShowLoading() =
+        withComposeRule {
+            createProductListScreen(uiState = ProductListUiState.Loading)
 
-        onNodeWithTag(PRODUCT_LIST_LOADING).assertIsDisplayed()
-    }
-
-    @Test
-    fun givenErrorState_whenRendered_thenShowErrorMessage() = withComposeRule {
-        createProductListScreen(uiState = ProductListUiState.Error(""))
-
-        onNodeWithText(getString(R.string.product_list_error)).assertIsDisplayed()
-    }
+            onNodeWithTag(PRODUCT_LIST_LOADING).assertIsDisplayed()
+        }
 
     @Test
-    fun givenSuccessState_whenRendered_thenShowProductsAndCount() = withComposeRule {
-        createProductListScreen(uiState = ProductListUiStateMother.success)
+    fun givenErrorState_whenRendered_thenShowErrorMessage() =
+        withComposeRule {
+            createProductListScreen(uiState = ProductListUiState.Error(""))
 
-        onNodeWithText(getString(R.string.product_list_count, 6)).assertIsDisplayed()
-        onNodeWithTag(FILTER_VIEW).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(coffee.id)).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(milk.id)).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(bread.id)).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(apple.id)).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(yogurt.id)).assertIsDisplayed()
-        onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(chicken.id)).assertIsDisplayed()
-    }
+            onNodeWithText(getString(R.string.product_list_error)).assertIsDisplayed()
+        }
 
     @Test
-    fun givenSuccessStateWithEmptyList_whenRendered_thenShowEmptyMessage() = withComposeRule {
-        createProductListScreen(uiState = ProductListUiStateMother.success.copy(products = emptyList()))
+    fun givenSuccessState_whenRendered_thenShowProductsAndCount() =
+        withComposeRule {
+            createProductListScreen(uiState = ProductListUiStateMother.success)
 
-        onNodeWithText(getString(R.string.product_list_no_products, 6)).assertIsDisplayed()
-    }
-
-    @Test
-    fun givenNoCategorySelected_whenRendered_thenMarkAllChip() = withComposeRule {
-        createProductListScreen(ProductListUiStateMother.success.copy(selectedCategory = null))
-
-        onNodeWithTag(UiTestTag.productListCategory(null)).assertIsSelected()
-    }
-
-    @Test
-    fun givenCategorySelected_whenRendered_thenMarkThatChip() = withComposeRule {
-        val category = "drinks"
-        createProductListScreen(ProductListUiStateMother.success.copy(
-            categories = listOf("bread", "dairy", category),
-            selectedCategory = category,
-        ))
-
-        onNodeWithTag(UiTestTag.productListCategory("drinks")).assertIsSelected()
-    }
+            onNodeWithText(getString(R.string.product_list_count, 6)).assertIsDisplayed()
+            onNodeWithTag(FILTER_VIEW).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(coffee.id)).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(milk.id)).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(bread.id)).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(apple.id)).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(yogurt.id)).assertIsDisplayed()
+            onListItemNodeWithTag(PRODUCT_LIST_LIST, productListItem(chicken.id)).assertIsDisplayed()
+        }
 
     @Test
-    fun givenNotSortOptionSelected_whenRendered_thenNotMarkSorterChips() = withComposeRule {
-        createProductListScreen(
-            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE)
-        )
+    fun givenSuccessStateWithEmptyList_whenRendered_thenShowEmptyMessage() =
+        withComposeRule {
+            createProductListScreen(uiState = ProductListUiStateMother.success.copy(products = emptyList()))
 
-        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
-            .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
-            .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
-            .assertIsNotSelected()
-    }
+            onNodeWithText(getString(R.string.product_list_no_products, 6)).assertIsDisplayed()
+        }
 
     @Test
-    fun givenSortOptionSelected_whenRendered_thenMarkChipWithSortOptionSelected() = withComposeRule {
-        createProductListScreen(
-            uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.PRICE_ASC)
-        )
+    fun givenNoCategorySelected_whenRendered_thenMarkAllChip() =
+        withComposeRule {
+            createProductListScreen(ProductListUiStateMother.success.copy(selectedCategory = null))
 
-        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
-            .assertIsSelected()
-        onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
-            .assertIsNotSelected()
-        onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
-            .assertIsNotSelected()
-    }
+            onNodeWithTag(UiTestTag.productListCategory(null)).assertIsSelected()
+        }
 
     @Test
-    fun givenCartItemCountZero_whenRendered_thenHidesBadge() = withComposeRule {
-        createProductListScreen(cartItemCount = 0)
+    fun givenCategorySelected_whenRendered_thenMarkThatChip() =
+        withComposeRule {
+            val category = "drinks"
+            createProductListScreen(
+                ProductListUiStateMother.success.copy(
+                    categories = listOf("bread", "dairy", category),
+                    selectedCategory = category,
+                ),
+            )
 
-        onNodeWithTag(TOP_APP_BAR_BADGE).assertDoesNotExist()
-    }
-
-    @Test
-    fun givenCartItemCountOne_whenRendered_thenShowsOne() = withComposeRule {
-        createProductListScreen(cartItemCount = 1)
-
-        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
-        onNodeWithText("1").assertIsDisplayed()
-    }
-
-    @Test
-    fun givenCartItemCountNinetyNine_whenRendered_thenShowsNinetyNine() = withComposeRule {
-        createProductListScreen(cartItemCount = 99)
-
-        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
-        onNodeWithText("99").assertIsDisplayed()
-    }
+            onNodeWithTag(UiTestTag.productListCategory("drinks")).assertIsSelected()
+        }
 
     @Test
-    fun givenCartItemCountOverNinetyNine_whenRendered_thenShowsNinetyNinePlus() = withComposeRule {
-        createProductListScreen(cartItemCount = 100)
+    fun givenNotSortOptionSelected_whenRendered_thenNotMarkSorterChips() =
+        withComposeRule {
+            createProductListScreen(
+                uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.NONE),
+            )
 
-        onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
-        onNodeWithText(getString(R.string.top_app_bar_badge_ninety_nine_plus)).assertIsDisplayed()
-    }
-
-    @Test
-    fun givenFilterVisible_whenToggleClicked_thenEmitFalse() = withComposeRule {
-        var emitted: Boolean? = null
-        createProductListScreen(
-            filterVisible = true,
-            onAction = {
-                if (it is ProductListAction.SetFiltersVisible) {
-                    emitted = it.showFilters
-                }
-            }
-        )
-
-        onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
-
-        assertEquals(false, emitted)
-    }
+            onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
+                .assertIsNotSelected()
+            onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
+                .assertIsNotSelected()
+            onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
+                .assertIsNotSelected()
+        }
 
     @Test
-    fun givenFilterHidden_whenToggleClicked_thenEmitTrue() = withComposeRule {
-        var emitted: Boolean? = null
-        createProductListScreen(
-            filterVisible = false,
-            onAction = {
-                if (it is ProductListAction.SetFiltersVisible) {
-                    emitted = it.showFilters
-                }
-            }
-        )
+    fun givenSortOptionSelected_whenRendered_thenMarkChipWithSortOptionSelected() =
+        withComposeRule {
+            createProductListScreen(
+                uiState = ProductListUiStateMother.success.copy(sortOption = SortOption.PRICE_ASC),
+            )
 
-        onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
-
-        assertEquals(true, emitted)
-    }
+            onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
+                .assertIsSelected()
+            onNodeWithTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
+                .assertIsNotSelected()
+            onNodeWithTag(UiTestTag.productListSort(SortOption.DISCOUNT))
+                .assertIsNotSelected()
+        }
 
     @Test
-    fun givenProductListRendered_whenSettingsIconClicked_thenEmitCallback() = withComposeRule {
-        var settingClicked = false
-        createProductListScreen(
-            onAction = {
-                if (it is ProductListAction.NavToSettings) settingClicked = true
-            }
-        )
+    fun givenCartItemCountZero_whenRendered_thenHidesBadge() =
+        withComposeRule {
+            createProductListScreen(cartItemCount = 0)
 
-        onNodeWithTag(TOP_APP_BAR_SETTINGS).performClick()
-
-        assertTrue(settingClicked)
-    }
+            onNodeWithTag(TOP_APP_BAR_BADGE).assertDoesNotExist()
+        }
 
     @Test
-    fun givenProductListRendered_whenCartIconClicked_thenEmitCallback() = withComposeRule {
-        var cartClicked = false
-        createProductListScreen(
-            onAction = {
-                if (it is ProductListAction.NavToCart) cartClicked = true
-            }
-        )
+    fun givenCartItemCountOne_whenRendered_thenShowsOne() =
+        withComposeRule {
+            createProductListScreen(cartItemCount = 1)
 
-        onNodeWithTag(TOP_APP_BAR_CART).performClick()
-
-        assertTrue(cartClicked)
-    }
+            onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+            onNodeWithText("1").assertIsDisplayed()
+        }
 
     @Test
-    fun givenProductListRendered_whenSortDiscountClick_thenEmitSortDiscountOption() = withComposeRule {
-        val expectedSortOption = SortOption.DISCOUNT
-        var sortOptionResult:SortOption = SortOption.NONE
-        createProductListScreen(
-            onAction = {
-                if (it is ProductListAction.SetOrderSelected) {
-                    sortOptionResult = it.sortOption
-                }
-            }
-        )
+    fun givenCartItemCountNinetyNine_whenRendered_thenShowsNinetyNine() =
+        withComposeRule {
+            createProductListScreen(cartItemCount = 99)
 
-        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
-            .performClick()
-
-        assertEquals(expectedSortOption, sortOptionResult)
-    }
+            onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+            onNodeWithText("99").assertIsDisplayed()
+        }
 
     @Test
-    fun givenProductListRendered_whenSortPriceDescClick_thenEmitSortPriceDescOption() = withComposeRule {
-        val expectedSortOption = SortOption.PRICE_DESC
-        var sortOptionResult:SortOption = SortOption.NONE
-        createProductListScreen(
-            onAction = {
-                if (it is ProductListAction.SetOrderSelected) {
-                    sortOptionResult = it.sortOption
-                }
-            }
-        )
+    fun givenCartItemCountOverNinetyNine_whenRendered_thenShowsNinetyNinePlus() =
+        withComposeRule {
+            createProductListScreen(cartItemCount = 100)
 
-        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
-            .performClick()
-
-        assertEquals(expectedSortOption, sortOptionResult)
-    }
+            onNodeWithTag(TOP_APP_BAR_BADGE).assertIsDisplayed()
+            onNodeWithText(getString(R.string.top_app_bar_badge_ninety_nine_plus)).assertIsDisplayed()
+        }
 
     @Test
-    fun givenProductListRendered_whenSortPriceAscClick_thenEmitSortPriceAscOption() = withComposeRule {
-        val expectedSortOption = SortOption.PRICE_ASC
-        var sortOptionResult:SortOption = SortOption.NONE
-        createProductListScreen(
-            onAction = {
-                if (it is ProductListAction.SetOrderSelected) {
-                    sortOptionResult = it.sortOption
-                }
-            }
-        )
+    fun givenFilterVisible_whenToggleClicked_thenEmitFalse() =
+        withComposeRule {
+            var emitted: Boolean? = null
+            createProductListScreen(
+                filterVisible = true,
+                onAction = {
+                    if (it is ProductListAction.SetFiltersVisible) {
+                        emitted = it.showFilters
+                    }
+                },
+            )
 
-        onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
-            .performClick()
+            onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
 
-        assertEquals(expectedSortOption, sortOptionResult)
-    }
+            assertEquals(false, emitted)
+        }
+
+    @Test
+    fun givenFilterHidden_whenToggleClicked_thenEmitTrue() =
+        withComposeRule {
+            var emitted: Boolean? = null
+            createProductListScreen(
+                filterVisible = false,
+                onAction = {
+                    if (it is ProductListAction.SetFiltersVisible) {
+                        emitted = it.showFilters
+                    }
+                },
+            )
+
+            onNodeWithTag(TOP_APP_BAR_FILTER).performClick()
+
+            assertEquals(true, emitted)
+        }
+
+    @Test
+    fun givenProductListRendered_whenSettingsIconClicked_thenEmitCallback() =
+        withComposeRule {
+            var settingClicked = false
+            createProductListScreen(
+                onAction = {
+                    if (it is ProductListAction.NavToSettings) settingClicked = true
+                },
+            )
+
+            onNodeWithTag(TOP_APP_BAR_SETTINGS).performClick()
+
+            assertTrue(settingClicked)
+        }
+
+    @Test
+    fun givenProductListRendered_whenCartIconClicked_thenEmitCallback() =
+        withComposeRule {
+            var cartClicked = false
+            createProductListScreen(
+                onAction = {
+                    if (it is ProductListAction.NavToCart) cartClicked = true
+                },
+            )
+
+            onNodeWithTag(TOP_APP_BAR_CART).performClick()
+
+            assertTrue(cartClicked)
+        }
+
+    @Test
+    fun givenProductListRendered_whenSortDiscountClick_thenEmitSortDiscountOption() =
+        withComposeRule {
+            val expectedSortOption = SortOption.DISCOUNT
+            var sortOptionResult: SortOption = SortOption.NONE
+            createProductListScreen(
+                onAction = {
+                    if (it is ProductListAction.SetOrderSelected) {
+                        sortOptionResult = it.sortOption
+                    }
+                },
+            )
+
+            onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+                .performClick()
+
+            assertEquals(expectedSortOption, sortOptionResult)
+        }
+
+    @Test
+    fun givenProductListRendered_whenSortPriceDescClick_thenEmitSortPriceDescOption() =
+        withComposeRule {
+            val expectedSortOption = SortOption.PRICE_DESC
+            var sortOptionResult: SortOption = SortOption.NONE
+            createProductListScreen(
+                onAction = {
+                    if (it is ProductListAction.SetOrderSelected) {
+                        sortOptionResult = it.sortOption
+                    }
+                },
+            )
+
+            onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+                .performClick()
+
+            assertEquals(expectedSortOption, sortOptionResult)
+        }
+
+    @Test
+    fun givenProductListRendered_whenSortPriceAscClick_thenEmitSortPriceAscOption() =
+        withComposeRule {
+            val expectedSortOption = SortOption.PRICE_ASC
+            var sortOptionResult: SortOption = SortOption.NONE
+            createProductListScreen(
+                onAction = {
+                    if (it is ProductListAction.SetOrderSelected) {
+                        sortOptionResult = it.sortOption
+                    }
+                },
+            )
+
+            onNodeWithTag(UiTestTag.productListSort(expectedSortOption))
+                .performClick()
+
+            assertEquals(expectedSortOption, sortOptionResult)
+        }
 }

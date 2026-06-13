@@ -4,12 +4,14 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.kover)
 }
 
 android {
     namespace = "com.jujodevs.cursotestingandroid"
     compileSdk {
-        version = release(36)
+        version = release(37)
     }
 
     sourceSets {
@@ -36,7 +38,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -47,6 +49,27 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "*.databinding.*",
+                    "*..BuildConfig*",
+                    "*Activity*",
+                    "*Screen*",
+                    "*ComposableSingletons*",
+                )
+            }
+        }
+        verify {
+            rule {
+                minBound(20)
+            }
+        }
     }
 }
 
@@ -65,7 +88,6 @@ dependencies {
     // Images
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-
 
     // Navigation 3
     implementation(libs.navigation3.ui)

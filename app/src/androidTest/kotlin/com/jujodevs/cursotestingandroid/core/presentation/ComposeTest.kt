@@ -10,7 +10,6 @@ open class ComposeTest {
     @get:Rule
     internal val composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    internal fun withComposeRule(
-        block: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>.() -> Unit,
-    ): Unit = block(composeRule)
+    internal fun withComposeRule(block: AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>.() -> Unit): Unit =
+        block(composeRule)
 }

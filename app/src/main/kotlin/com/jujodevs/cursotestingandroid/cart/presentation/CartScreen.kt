@@ -85,7 +85,7 @@ fun CartScreen(
     CartContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onAction = { cartViewModel.onAction(it) }
+        onAction = { cartViewModel.onAction(it) },
     )
 }
 
@@ -93,7 +93,7 @@ fun CartScreen(
 internal fun CartContent(
     uiState: CartUiState,
     snackbarHostState: SnackbarHostState,
-    onAction: (CartAction) -> Unit
+    onAction: (CartAction) -> Unit,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -102,14 +102,14 @@ internal fun CartContent(
                 title = stringResource(R.string.cart_title),
                 onBack = { onAction(CartAction.GoBack) },
             )
-        }
+        },
     ) { paddingValues ->
         when (uiState) {
             CartUiState.Loading -> {
                 CartLoadingStateScreen(
                     Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
+                        .padding(paddingValues),
                 )
             }
 
@@ -117,19 +117,22 @@ internal fun CartContent(
                 CartErrorStateScreen(
                     state = uiState,
                     onRetrySelected = { onAction(CartAction.LoadCart) },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
                 )
             }
 
-            is CartUiState.Success -> CartSuccessStateScreen(
-                state = uiState,
-                onAction = onAction,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            )
+            is CartUiState.Success ->
+                CartSuccessStateScreen(
+                    state = uiState,
+                    onAction = onAction,
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                )
         }
     }
 }
@@ -163,7 +166,7 @@ private fun CartErrorStateScreen(
         Spacer(Modifier.height(16.dp))
         Button(
             modifier = Modifier.testTag(CART_RETRY),
-            onClick = onRetrySelected
+            onClick = onRetrySelected,
         ) {
             Text(text = stringResource(R.string.cart_retry))
         }
@@ -176,12 +179,14 @@ fun CartSuccessStateScreen(
     onAction: (CartAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currencyFormatter = remember {
-        NumberFormat.getCurrencyInstance()
-            .apply {
-                currency = Currency.getInstance("USD")
-            }
-    }
+    val currencyFormatter =
+        remember {
+            NumberFormat
+                .getCurrencyInstance()
+                .apply {
+                    currency = Currency.getInstance("USD")
+                }
+        }
 
     Box(modifier.padding(16.dp)) {
         AnimatedContent(state.cartItems.isEmpty()) { isEmpty ->
@@ -212,21 +217,22 @@ fun CartSuccessStateScreen(
                 Column(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(
                         modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        contentPadding =
+                            PaddingValues(
+                                horizontal = 16.dp,
+                                vertical = 8.dp,
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         items(
                             items = state.cartItems,
-                            key = { it.cartItem.productId }
+                            key = { it.cartItem.productId },
                         ) { itemWithProduct ->
                             CartItemCard(
                                 itemWithProduct = itemWithProduct,
                                 currencyFormatter = currencyFormatter,
                                 onAction = onAction,
-                                modifier = Modifier.animateItem()
+                                modifier = Modifier.animateItem(),
                             )
                         }
                     }
@@ -234,9 +240,10 @@ fun CartSuccessStateScreen(
                     CartSummaryCard(
                         summary = state.summary,
                         currencyFormatter = currencyFormatter,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                     )
                 }
             }
@@ -255,11 +262,12 @@ fun CartItemCard(
     val promotion = itemWithProduct.item.promotion
     val cartItem = itemWithProduct.cartItem
 
-    val unitPrice = when (promotion) {
-        is ProductPromotion.Percent -> promotion.discountedPrice
-        is ProductPromotion.BuyXPayY -> product.price
-        null -> product.price
-    }
+    val unitPrice =
+        when (promotion) {
+            is ProductPromotion.Percent -> promotion.discountedPrice
+            is ProductPromotion.BuyXPayY -> product.price
+            null -> product.price
+        }
 
     val hasDiscount = promotion is ProductPromotion.Percent
     val itemTotal = unitPrice * cartItem.quantity
@@ -279,17 +287,18 @@ fun CartItemCard(
         enableDismissFromEndToStart = false,
         backgroundContent = {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(color = MaterialTheme.colorScheme.errorContainer),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(color = MaterialTheme.colorScheme.errorContainer),
                 contentAlignment = Alignment.CenterStart,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
                     contentDescription = stringResource(R.string.cart_delete_content_description),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
         },
@@ -298,29 +307,32 @@ fun CartItemCard(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            )
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max)
-                    .padding(8.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Max)
+                        .padding(8.dp),
             ) {
                 AsyncImage(
                     model = product.imageUrl,
                     contentDescription = product.name,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .weight(1.5f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(16.dp)),
+                    modifier =
+                        Modifier
+                            .weight(1.5f)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(16.dp)),
                 )
                 Spacer(Modifier.width(24.dp))
                 Column(
                     modifier = Modifier.weight(3f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
                         text = product.name,
@@ -331,7 +343,7 @@ fun CartItemCard(
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         if (hasDiscount) {
                             Text(
@@ -341,20 +353,22 @@ fun CartItemCard(
                                 textDecoration = TextDecoration.LineThrough,
                             )
                             Text(
-                                text = stringResource(
-                                    R.string.cart_item_unit_price,
-                                    currencyFormatter.format(unitPrice)
-                                ),
+                                text =
+                                    stringResource(
+                                        R.string.cart_item_unit_price,
+                                        currencyFormatter.format(unitPrice),
+                                    ),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                         } else {
                             Text(
-                                text = stringResource(
-                                    R.string.cart_item_unit_price,
-                                    currencyFormatter.format(unitPrice)
-                                ),
+                                text =
+                                    stringResource(
+                                        R.string.cart_item_unit_price,
+                                        currencyFormatter.format(unitPrice),
+                                    ),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -362,10 +376,11 @@ fun CartItemCard(
                     }
 
                     Text(
-                        text = stringResource(
-                            R.string.cart_item_total_price,
-                            currencyFormatter.format(itemTotal)
-                        ),
+                        text =
+                            stringResource(
+                                R.string.cart_item_total_price,
+                                currencyFormatter.format(itemTotal),
+                            ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -377,24 +392,25 @@ fun CartItemCard(
                             onAction(
                                 CartAction.DecreaseQuantity(
                                     cartItem.productId,
-                                    cartItem.quantity
-                                )
+                                    cartItem.quantity,
+                                ),
                             )
                         },
                         onIncreaseClick = {
                             onAction(
                                 CartAction.IncreaseQuantity(
                                     cartItem.productId,
-                                    cartItem.quantity
-                                )
+                                    cartItem.quantity,
+                                ),
                             )
                         },
-                        modifier = Modifier.background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = RoundedCornerShape(8.dp)
-                        ),
+                        modifier =
+                            Modifier.background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(8.dp),
+                            ),
                         increaseTestTag = cartQuantityIncrease(cartItem.productId),
-                        decreaseTestTag = cartQuantityDecrease(cartItem.productId)
+                        decreaseTestTag = cartQuantityDecrease(cartItem.productId),
                     )
                 }
             }
@@ -412,13 +428,14 @@ fun CartSummaryCard(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.cart_summary_title),
@@ -463,7 +480,7 @@ fun CartSummaryCard(
 
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
-                thickness = 1.dp
+                thickness = 1.dp,
             )
 
             Row(

@@ -19,99 +19,102 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
-class GetCartSummaryUseCase @Inject constructor(
-    private val cartRepository: CartRepository,
-    private val productRepository: ProductRepository,
-    private val promotionRepository: PromotionRepository,
-    private val groupPromotionsByProductId: GroupPromotionsByProductId,
-    private val getPromotionForProduct: GetPromotionForProduct,
-    private val clock: Clock,
-) {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(): Flow<CartSummary> {
-        return cartRepository.getCartItems()
-            .flatMapLatest { cartItems ->
-                val ids = cartItems.mapTo(mutableSetOf()) { it.productId }
-                if (ids.isEmpty()) {
-                    flowOf(
-                        CartSummary(
-                            0.0,
-                            0.0,
-                            0.0
+class GetCartSummaryUseCase
+    @Inject
+    constructor(
+        private val cartRepository: CartRepository,
+        private val productRepository: ProductRepository,
+        private val promotionRepository: PromotionRepository,
+        private val groupPromotionsByProductId: GroupPromotionsByProductId,
+        private val getPromotionForProduct: GetPromotionForProduct,
+        private val clock: Clock,
+    ) {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        operator fun invoke(): Flow<CartSummary> =
+            cartRepository
+                .getCartItems()
+                .flatMapLatest { cartItems ->
+                    val ids = cartItems.mapTo(mutableSetOf()) { it.productId }
+                    if (ids.isEmpty()) {
+                        flowOf(
+                            CartSummary(
+                                0.0,
+                                0.0,
+                                0.0,
+                            ),
                         )
-                    )
-                } else {
-                    combine(
-                        productRepository.getProductsById(ids),
-                        promotionRepository.getActivePromotions()
-                    ) { products, promotions ->
-                        calculateSummary(
-                            cartItems,
-                            products,
-                            promotions
-                        )
+                    } else {
+                        combine(
+                            productRepository.getProductsById(ids),
+                            promotionRepository.getActivePromotions(),
+                        ) { products, promotions ->
+                            calculateSummary(
+                                cartItems,
+                                products,
+                                promotions,
+                            )
+                        }
                     }
                 }
+
+        private fun calculateSummary(
+            cartItems: List<CartItem>,
+            products: List<Product>,
+            promotions: List<Promotion>,
+        ): CartSummary {
+            val now = clock.now()
+            val activePromotions = groupPromotionsByProductId(promotions.activeAt(now))
+            val productsById = products.associateBy { it.id }
+            var subtotal = 0.0
+            var discountTotal = 0.0
+
+            for (cartItem in cartItems) {
+                val product = productsById[cartItem.productId] ?: continue
+                val itemTotal = product.price * cartItem.quantity
+                subtotal += itemTotal
+
+                discountTotal +=
+                    calculateDiscountForProduct(
+                        product = product,
+                        quantity = cartItem.quantity,
+                        activePromotions = activePromotions,
+                    )
             }
-    }
+            val finalTotal = (subtotal - discountTotal).coerceAtLeast(0.0)
 
-    private fun calculateSummary(
-        cartItems: List<CartItem>,
-        products: List<Product>,
-        promotions: List<Promotion>,
-    ): CartSummary {
-        val now = clock.now()
-        val activePromotions = groupPromotionsByProductId(promotions.activeAt(now))
-        val productsById = products.associateBy { it.id }
-        var subtotal = 0.0
-        var discountTotal = 0.0
-
-        for (cartItem in cartItems) {
-            val product = productsById[cartItem.productId] ?: continue
-            val itemTotal = product.price * cartItem.quantity
-            subtotal += itemTotal
-
-            discountTotal += calculateDiscountForProduct(
-                product = product,
-                quantity = cartItem.quantity,
-                activePromotions = activePromotions,
+            return CartSummary(
+                subtotal = subtotal,
+                discountTotal = discountTotal,
+                finalTotal = finalTotal,
             )
-
-
         }
-        val finalTotal = (subtotal - discountTotal).coerceAtLeast(0.0)
 
-        return CartSummary(
-            subtotal = subtotal,
-            discountTotal = discountTotal,
-            finalTotal = finalTotal
-        )
-    }
+        private fun calculateDiscountForProduct(
+            product: Product,
+            quantity: Int,
+            activePromotions: Map<String, List<Promotion>>,
+        ): Double =
+            when (
+                val selectPromotion =
+                    getPromotionForProduct(
+                        product = product,
+                        promotions = activePromotions,
+                    )
+            ) {
+                is ProductPromotion.BuyXPayY -> {
+                    val buy = selectPromotion.buy
+                    val pay = selectPromotion.pay
+                    val freePerGroup = (buy - pay).coerceAtLeast(0)
+                    val groups = quantity / buy
+                    val freeItems = freePerGroup * groups
+                    product.price * freeItems
+                }
 
-    private fun calculateDiscountForProduct(
-        product: Product,
-        quantity: Int,
-        activePromotions: Map<String, List<Promotion>>,
-    ): Double {
-        return when (val selectPromotion = getPromotionForProduct(
-            product = product,
-            promotions = activePromotions
-        )) {
-            is ProductPromotion.BuyXPayY -> {
-                val buy = selectPromotion.buy
-                val pay = selectPromotion.pay
-                val freePerGroup = (buy - pay).coerceAtLeast(0)
-                val groups = quantity / buy
-                val freeItems = freePerGroup * groups
-                product.price * freeItems
+                is ProductPromotion.Percent -> {
+                    val itemSubTotal = product.price * quantity
+                    itemSubTotal * (selectPromotion.percent / 100)
+                }
+
+                null -> 0.0
             }
-
-            is ProductPromotion.Percent -> {
-                val itemSubTotal = product.price * quantity
-                itemSubTotal * (selectPromotion.percent / 100)
-            }
-
-            null -> 0.0
-        }
     }
-}

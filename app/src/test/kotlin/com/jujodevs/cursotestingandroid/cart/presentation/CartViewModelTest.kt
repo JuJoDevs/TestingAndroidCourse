@@ -24,7 +24,6 @@ import org.junit.Rule
 import org.junit.Test
 
 class CartViewModelTest {
-
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     lateinit var productRepository: FakeProductRepository
@@ -51,85 +50,92 @@ class CartViewModelTest {
         clock: Clock = this.clock,
     ) = CartViewModel(
         cartRepository = cartRepository,
-        getCartSummaryUseCase = GetCartSummaryUseCase(
-            cartRepository = cartRepository,
-            productRepository = productRepository,
-            promotionRepository = promotionRepository,
-            groupPromotionsByProductId = GroupPromotionsByProductId(),
-            getPromotionForProduct = GetPromotionForProduct(),
-            clock = clock,
-        ),
-        updateCartItemUseCase = UpdateCartItemUseCase(
-            cartRepository = cartRepository,
-            productRepository = productRepository,
-        ),
-        getCartItemWithPromotionUseCase = GetCartItemWithPromotionUseCase(
-            cartRepository = cartRepository,
-            productRepository = productRepository,
-            promotionRepository = promotionRepository,
-            groupPromotionsByProductId = GroupPromotionsByProductId(),
-            getPromotionForProduct = GetPromotionForProduct(),
-            clock = clock,
-        ),
+        getCartSummaryUseCase =
+            GetCartSummaryUseCase(
+                cartRepository = cartRepository,
+                productRepository = productRepository,
+                promotionRepository = promotionRepository,
+                groupPromotionsByProductId = GroupPromotionsByProductId(),
+                getPromotionForProduct = GetPromotionForProduct(),
+                clock = clock,
+            ),
+        updateCartItemUseCase =
+            UpdateCartItemUseCase(
+                cartRepository = cartRepository,
+                productRepository = productRepository,
+            ),
+        getCartItemWithPromotionUseCase =
+            GetCartItemWithPromotionUseCase(
+                cartRepository = cartRepository,
+                productRepository = productRepository,
+                promotionRepository = promotionRepository,
+                groupPromotionsByProductId = GroupPromotionsByProductId(),
+                getPromotionForProduct = GetPromotionForProduct(),
+                clock = clock,
+            ),
     )
 
     @Test
-    fun `GIVEN cart data WHEN initialized THEN emit success state`() = runTurbineTest {
-        val productId = "1"
-        val p = product { withId(productId).withName("Pan").withPrice(2.0) }
-        val cartItem = cartItem { withProductId(productId).withQuantity(3) }
-        productRepository.setProducts(listOf(p))
-        cartRepository.setCartItems(listOf(cartItem))
+    fun `GIVEN cart data WHEN initialized THEN emit success state`() =
+        runTurbineTest {
+            val productId = "1"
+            val p = product { withId(productId).withName("Pan").withPrice(2.0) }
+            val cartItem = cartItem { withProductId(productId).withQuantity(3) }
+            productRepository.setProducts(listOf(p))
+            cartRepository.setCartItems(listOf(cartItem))
 
-        val state = viewModel.uiState.testIn(this)
+            val state = viewModel.uiState.testIn(this)
 
-        val updatedState = state.awaitItem() as CartUiState.Success
-        assertEquals(1, updatedState.cartItems.size)
-        assertEquals(6.0, updatedState.summary.subtotal, 0.0)
-        state.cancelAndIgnoreRemainingEvents()
-    }
-
-    @Test
-    fun `GIVEN quantity one WHEN decrease quantity THEN removes item from cart`() = runTurbineTest {
-        val productId = "1"
-        val p = product { withId(productId).withName("Pan").withPrice(2.0) }
-        val cartItem = cartItem { withProductId(productId).withQuantity(1) }
-        productRepository.setProducts(listOf(p))
-        cartRepository.setCartItems(listOf(cartItem))
-        val state = viewModel.uiState.testIn(this).apply { awaitItem() }
-
-        viewModel.onAction(CartAction.DecreaseQuantity(productId, 1))
-
-        val updatedState = state.awaitItem() as CartUiState.Success
-        assertEquals(0, updatedState.cartItems.size)
-        assertEquals(0.0, updatedState.summary.subtotal, 0.0)
-        state.cancelAndIgnoreRemainingEvents()
-    }
+            val updatedState = state.awaitItem() as CartUiState.Success
+            assertEquals(1, updatedState.cartItems.size)
+            assertEquals(6.0, updatedState.summary.subtotal, 0.0)
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
     @Test
-    fun `GIVEN insufficient stock WHEN update quantity THEN emits an error event`() = runTurbineTest {
-        val productId = "1"
-        val p = product { withId(productId).withStock(2) }
-        val cartItem = cartItem { withProductId(productId).withQuantity(1) }
-        productRepository.setProducts(listOf(p))
-        cartRepository.setCartItems(listOf(cartItem))
-        val event = viewModel.events.testIn(this)
+    fun `GIVEN quantity one WHEN decrease quantity THEN removes item from cart`() =
+        runTurbineTest {
+            val productId = "1"
+            val p = product { withId(productId).withName("Pan").withPrice(2.0) }
+            val cartItem = cartItem { withProductId(productId).withQuantity(1) }
+            productRepository.setProducts(listOf(p))
+            cartRepository.setCartItems(listOf(cartItem))
+            val state = viewModel.uiState.testIn(this).apply { awaitItem() }
 
-        viewModel.onAction(CartAction.IncreaseQuantity(productId, 5))
+            viewModel.onAction(CartAction.DecreaseQuantity(productId, 1))
 
-        val updatedEvent = event.awaitItem()
-        assertTrue(updatedEvent is CartEvent.ShowMessage)
-        event.cancelAndIgnoreRemainingEvents()
-    }
+            val updatedState = state.awaitItem() as CartUiState.Success
+            assertEquals(0, updatedState.cartItems.size)
+            assertEquals(0.0, updatedState.summary.subtotal, 0.0)
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
     @Test
-    fun `WHEN receive a go back action THEN emits a go back event`() = runTurbineTest {
-        val event = viewModel.events.testIn(this)
+    fun `GIVEN insufficient stock WHEN update quantity THEN emits an error event`() =
+        runTurbineTest {
+            val productId = "1"
+            val p = product { withId(productId).withStock(2) }
+            val cartItem = cartItem { withProductId(productId).withQuantity(1) }
+            productRepository.setProducts(listOf(p))
+            cartRepository.setCartItems(listOf(cartItem))
+            val event = viewModel.events.testIn(this)
 
-        viewModel.onAction(CartAction.GoBack)
+            viewModel.onAction(CartAction.IncreaseQuantity(productId, 5))
 
-        val updatedEvent = event.awaitItem()
-        assertTrue(updatedEvent is CartEvent.GoBack)
-        event.cancelAndIgnoreRemainingEvents()
-    }
+            val updatedEvent = event.awaitItem()
+            assertTrue(updatedEvent is CartEvent.ShowMessage)
+            event.cancelAndIgnoreRemainingEvents()
+        }
+
+    @Test
+    fun `WHEN receive a go back action THEN emits a go back event`() =
+        runTurbineTest {
+            val event = viewModel.events.testIn(this)
+
+            viewModel.onAction(CartAction.GoBack)
+
+            val updatedEvent = event.awaitItem()
+            assertTrue(updatedEvent is CartEvent.GoBack)
+            event.cancelAndIgnoreRemainingEvents()
+        }
 }

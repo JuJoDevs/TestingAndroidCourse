@@ -3,7 +3,6 @@ package com.jujodevs.cursotestingandroid.core.test
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 
 object UiTestTag {
-
     // TOP APP BAR
     const val TOP_APP_BAR_BACK = "top_app_bar"
     const val TOP_APP_BAR_BADGE = "top_app_bar_badge"
@@ -23,7 +22,7 @@ object UiTestTag {
     const val PRODUCT_LIST_LOADING = "product_list_loading"
     const val PRODUCT_LIST_LIST = "product_list_list"
 
-    fun productListItem(productId: String) = "product_list_item_${productId}"
+    fun productListItem(productId: String) = "product_list_item_$productId"
 
     fun productListCategory(category: String?) = "product_list_category_${category ?: "all"}"
 
@@ -38,7 +37,9 @@ object UiTestTag {
     const val CART_RETRY = "cart_retry"
     const val CART_EMPTY = "cart_empty"
 
-    fun cartItem(productId: String) = "cart_item_${productId}"
-    fun cartQuantityIncrease(productId: String) = "cart_quantity_increase_${productId}"
-    fun cartQuantityDecrease(productId: String) = "cart_quantity_decrease_${productId}"
+    fun cartItem(productId: String) = "cart_item_$productId"
+
+    fun cartQuantityIncrease(productId: String) = "cart_quantity_increase_$productId"
+
+    fun cartQuantityDecrease(productId: String) = "cart_quantity_decrease_$productId"
 }

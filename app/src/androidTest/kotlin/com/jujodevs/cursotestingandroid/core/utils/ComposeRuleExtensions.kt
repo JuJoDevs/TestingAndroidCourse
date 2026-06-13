@@ -9,8 +9,9 @@ import androidx.compose.ui.test.performScrollToNode
 fun SemanticsNodeInteractionsProvider.onListItemNodeWithTag(
     listTestTag: String,
     testTag: String,
-    useUnmergedTree: Boolean = false
-): SemanticsNodeInteraction = run {
-    onNodeWithTag(listTestTag).performScrollToNode(hasTestTag(testTag))
-    onNodeWithTag(testTag, useUnmergedTree)
-}
+    useUnmergedTree: Boolean = false,
+): SemanticsNodeInteraction =
+    run {
+        onNodeWithTag(listTestTag).performScrollToNode(hasTestTag(testTag))
+        onNodeWithTag(testTag, useUnmergedTree)
+    }

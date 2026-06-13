@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DoubleExTest {
-
     @Test
     fun `given double when round to 2 decimals then rounds up correctly`() {
         val double = 4.6578

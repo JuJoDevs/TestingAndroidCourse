@@ -14,15 +14,15 @@ import org.junit.Rule
 import org.junit.Test
 
 class ProductListViewModelMockTest {
-
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
-    private val settingsRepository: SettingsRepository = mockk(relaxed = true) {
-        every { selectedCategory } returns flowOf(null)
-        every { sortOption } returns flowOf(SortOption.NONE)
-        every { inStockOnly } returns flowOf(false)
-        every { filtersVisible } returns flowOf(false)
-    }
+    private val settingsRepository: SettingsRepository =
+        mockk(relaxed = true) {
+            every { selectedCategory } returns flowOf(null)
+            every { sortOption } returns flowOf(SortOption.NONE)
+            every { inStockOnly } returns flowOf(false)
+            every { filtersVisible } returns flowOf(false)
+        }
     private val getProductsUseCase: GetProductsUseCase = mockk()
 
     lateinit var viewModel: ProductListViewModel
@@ -30,10 +30,11 @@ class ProductListViewModelMockTest {
     @Before
     fun setUp() {
         every { getProductsUseCase.invoke() } returns flowOf()
-        viewModel = ProductListViewModel(
-            getProductsUseCase = getProductsUseCase,
-            settingsRepository = settingsRepository
-        )
+        viewModel =
+            ProductListViewModel(
+                getProductsUseCase = getProductsUseCase,
+                settingsRepository = settingsRepository,
+            )
     }
 
     @Test
