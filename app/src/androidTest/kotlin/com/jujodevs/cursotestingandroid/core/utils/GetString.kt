@@ -7,7 +7,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 fun AndroidComposeTestRule<ActivityScenarioRule<ComponentActivity>, ComponentActivity>.getString(
     redId: Int,
     vararg formatArgs: Any,
-): String = activity.getString(
-    redId,
-    *formatArgs
-)
+): String =
+    activity.getString(
+        redId,
+        *formatArgs,
+    )

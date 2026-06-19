@@ -32,19 +32,20 @@ fun FiltersMenu(
     onAction: (ProductListAction) -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag(FILTER_VIEW)
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .testTag(FILTER_VIEW)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp,
+                ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(R.string.filters_categories_title),
@@ -52,32 +53,38 @@ fun FiltersMenu(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 FilterChip(
                     modifier = Modifier.testTag(UiTestTag.productListCategory(null)),
                     selected = state.selectedCategory == null,
                     onClick = { onAction(ProductListAction.SetCategory(null)) },
-                    label = { Text(
-                        text = stringResource(R.string.filters_all_categories),
-                        style = MaterialTheme.typography.labelSmall
-                    ) }
+                    label = {
+                        Text(
+                            text = stringResource(R.string.filters_all_categories),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    },
                 )
                 state.categories.forEach { category ->
                     FilterChip(
                         modifier = Modifier.testTag(UiTestTag.productListCategory(category)),
-                        selected = category.equals(
-                            other = state.selectedCategory,
-                            ignoreCase = true
-                        ),
+                        selected =
+                            category.equals(
+                                other = state.selectedCategory,
+                                ignoreCase = true,
+                            ),
                         onClick = { onAction(ProductListAction.SetCategory(category)) },
-                        label = { Text(
-                            text = category,
-                            style = MaterialTheme.typography.labelSmall
-                        ) }
+                        label = {
+                            Text(
+                                text = category,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        },
                     )
                 }
             }
@@ -92,34 +99,37 @@ fun FiltersMenu(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OrderFilterChip(
                     text = stringResource(R.string.filters_sort_price_asc),
                     sortOption = SortOption.PRICE_ASC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier
-                        .testTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .testTag(UiTestTag.productListSort(SortOption.PRICE_ASC))
+                            .weight(1f),
                 )
                 OrderFilterChip(
                     text = stringResource(R.string.filters_sort_price_desc),
                     sortOption = SortOption.PRICE_DESC,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier
-                        .testTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .testTag(UiTestTag.productListSort(SortOption.PRICE_DESC))
+                            .weight(1f),
                 )
                 OrderFilterChip(
                     text = stringResource(R.string.filters_sort_discount),
                     sortOption = SortOption.DISCOUNT,
                     currentSortOption = state.sortOption,
                     onAction = onAction,
-                    modifier = Modifier
-                        .testTag(UiTestTag.productListSort(SortOption.DISCOUNT))
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .testTag(UiTestTag.productListSort(SortOption.DISCOUNT))
+                            .weight(1f),
                 )
             }
         }
@@ -136,9 +146,13 @@ fun OrderFilterChip(
 ) {
     FilterChip(
         selected = currentSortOption == sortOption,
-        onClick = { onAction(ProductListAction.SetOrderSelected(
-            if (sortOption == currentSortOption) SortOption.NONE else sortOption
-        )) },
+        onClick = {
+            onAction(
+                ProductListAction.SetOrderSelected(
+                    if (sortOption == currentSortOption) SortOption.NONE else sortOption,
+                ),
+            )
+        },
         label = { Text(text = text, style = MaterialTheme.typography.labelSmall) },
         modifier = modifier,
     )

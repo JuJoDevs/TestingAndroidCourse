@@ -17,28 +17,39 @@ class PromotionEntityBuilder {
     private var percent: Int? = null
 
     fun withId(id: String) = apply { this.id = id }
+
     fun withType(type: String) = apply { this.type = type }
-    fun withProductIds(productsIds: List<String>) = apply {
-        this.productIds = productsIds.toListString()
-    }
+
+    fun withProductIds(productsIds: List<String>) =
+        apply {
+            this.productIds = productsIds.toListString()
+        }
+
     fun withValue(value: Double) = apply { this.value = value }
+
     fun withBuyQuantity(buyQuantity: Int?) = apply { this.buyQuantity = buyQuantity }
+
     fun withStartTime(startAtEpoch: Long) = apply { this.startAtEpoch = startAtEpoch }
+
     fun withEndTime(endAtEpoch: Long) = apply { this.endAtEpoch = endAtEpoch }
+
     fun withBuyX(buyX: Int?) = apply { this.buyX = buyX }
+
     fun withPayY(payY: Int?) = apply { this.payY = payY }
+
     fun withPercent(percent: Int?) = apply { this.percent = percent }
 
-    fun build() = PromotionEntity(
-        id = id,
-        type = type,
-        productIds = productIds,
-        startAtEpoch = startAtEpoch,
-        endAtEpoch = endAtEpoch,
-        buyX = buyX,
-        payY = payY,
-        percent = percent,
-    )
+    fun build() =
+        PromotionEntity(
+            id = id,
+            type = type,
+            productIds = productIds,
+            startAtEpoch = startAtEpoch,
+            endAtEpoch = endAtEpoch,
+            buyX = buyX,
+            payY = payY,
+            percent = percent,
+        )
 }
 
 fun promotionEntity(block: PromotionEntityBuilder.() -> Unit = {}) = PromotionEntityBuilder().apply(block).build()

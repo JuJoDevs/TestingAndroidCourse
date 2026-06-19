@@ -24,7 +24,6 @@ import kotlin.test.assertFailsWith
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class OfflineFirstIntegrationTest {
-
     private companion object {
         private const val DEFAULT_PRODUCT_ASSET = "product_list_default.json"
         private const val UPDATED_PRODUCT_ASSET = "product_list_updated.json"
@@ -50,58 +49,63 @@ class OfflineFirstIntegrationTest {
     }
 
     @Test
-    fun givenSuccessfulRefresh_whenGetProducts_thenRoomContainsRemoteProducts() = runTest {
-        serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
-        productRepository.refreshProducts()
+    fun givenSuccessfulRefresh_whenGetProducts_thenRoomContainsRemoteProducts() =
+        runTest {
+            serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
+            productRepository.refreshProducts()
 
-        val cachedProducts = productRepository.getProducts().first { it.size == DEFAULT_SIZE }
+            val cachedProducts = productRepository.getProducts().first { it.size == DEFAULT_SIZE }
 
-        assertEquals(DEFAULT_SIZE, cachedProducts.size)
-    }
-
-    @Test
-    fun givenEmptyCacheAndFailedRefresh_whenGetProducts_theEmitsEmptyList() = runTest {
-        serveProductsError()
-
-        assertFailsWith<AppError.NetworkError> { productRepository.refreshProducts() }
-
-        val products = productRepository.getProducts().first { it.isEmpty() }
-        assertTrue(products.isEmpty())
-    }
+            assertEquals(DEFAULT_SIZE, cachedProducts.size)
+        }
 
     @Test
-    fun givenCachedProductsAndFailedRefresh_whenGetProducts_thenReturnsPreviousCache() = runTest {
-        serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
-        productRepository.refreshProducts()
-        productRepository.getProducts().first { it.size == DEFAULT_SIZE }
-        serveProductsError()
+    fun givenEmptyCacheAndFailedRefresh_whenGetProducts_theEmitsEmptyList() =
+        runTest {
+            serveProductsError()
 
-        assertFailsWith<AppError.NetworkError> { productRepository.refreshProducts() }
+            assertFailsWith<AppError.NetworkError> { productRepository.refreshProducts() }
 
-        val cachedProducts = productRepository.getProducts().first { it.size == DEFAULT_SIZE }
-
-        assertEquals(DEFAULT_SIZE, cachedProducts.size)
-    }
+            val products = productRepository.getProducts().first { it.isEmpty() }
+            assertTrue(products.isEmpty())
+        }
 
     @Test
-    fun givenCachedProducts_whenRefreshWithNewPayload_thenContainsOnlyLatestProducts() = runTest {
-        serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
-        productRepository.refreshProducts()
-        productRepository.getProducts().first { it.size == DEFAULT_SIZE }
-        serverProductsFromAsset(UPDATED_PRODUCT_ASSET)
-        productRepository.refreshProducts()
+    fun givenCachedProductsAndFailedRefresh_whenGetProducts_thenReturnsPreviousCache() =
+        runTest {
+            serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
+            productRepository.refreshProducts()
+            productRepository.getProducts().first { it.size == DEFAULT_SIZE }
+            serveProductsError()
 
-        val updatedProducts = productRepository.getProducts().first { it.size == UPDATED_SIZE }
+            assertFailsWith<AppError.NetworkError> { productRepository.refreshProducts() }
 
-        assertEquals(UPDATED_SIZE, updatedProducts.size)
-        assertEquals("updated-p1", updatedProducts.first().id)
-        assertEquals("Pan integral", updatedProducts.first().name)
-    }
+            val cachedProducts = productRepository.getProducts().first { it.size == DEFAULT_SIZE }
+
+            assertEquals(DEFAULT_SIZE, cachedProducts.size)
+        }
+
+    @Test
+    fun givenCachedProducts_whenRefreshWithNewPayload_thenContainsOnlyLatestProducts() =
+        runTest {
+            serverProductsFromAsset(DEFAULT_PRODUCT_ASSET)
+            productRepository.refreshProducts()
+            productRepository.getProducts().first { it.size == DEFAULT_SIZE }
+            serverProductsFromAsset(UPDATED_PRODUCT_ASSET)
+            productRepository.refreshProducts()
+
+            val updatedProducts = productRepository.getProducts().first { it.size == UPDATED_SIZE }
+
+            assertEquals(UPDATED_SIZE, updatedProducts.size)
+            assertEquals("updated-p1", updatedProducts.first().id)
+            assertEquals("Pan integral", updatedProducts.first().name)
+        }
 
     private fun serverProductsFromAsset(assetName: String) {
-        mockWebServer.server.dispatcher = MiniMarketApiDispatcher(
-            productJson = assetName.asAsset(),
-        )
+        mockWebServer.server.dispatcher =
+            MiniMarketApiDispatcher(
+                productJson = assetName.asAsset(),
+            )
     }
 
     private fun serveProductsError() {

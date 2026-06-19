@@ -1,6 +1,5 @@
 package com.jujodevs.cursotestingandroid.settings.presentation
 
-import androidx.annotation.IdRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,14 +54,14 @@ fun SettingsScreen(
     val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
 
     ObserveAsEvents(settingsViewModel.uiEvent) { uiEvent ->
-        when(uiEvent) {
-            is SettingsUiEvent.onBack -> onBack()
+        when (uiEvent) {
+            is SettingsUiEvent.OnBack -> onBack()
         }
     }
 
     SettingsContent(
         uiState = uiState,
-        onAction = { settingsViewModel.onAction(it) }
+        onAction = { settingsViewModel.onAction(it) },
     )
 }
 
@@ -75,16 +74,17 @@ internal fun SettingsContent(
         topBar = {
             MarketTopAppBar(
                 title = stringResource(R.string.settings_title),
-                onBack = { onAction(SettingsAction.OnBack) }
+                onBack = { onAction(SettingsAction.OnBack) },
             )
-        }
+        },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .testTag(SETTINGS_CONTENT)
-                .padding(paddingValues)
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .testTag(SETTINGS_CONTENT)
+                    .padding(paddingValues)
+                    .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Card(
@@ -95,17 +95,17 @@ internal fun SettingsContent(
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
 
                         Text(
@@ -147,17 +147,17 @@ internal fun SettingsContent(
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.DarkMode,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         )
 
                         Text(
@@ -172,7 +172,7 @@ internal fun SettingsContent(
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.settings_theme_label),
@@ -186,49 +186,52 @@ internal fun SettingsContent(
                         )
                         Spacer(Modifier.height(4.dp))
                         SingleChoiceSegmentedButtonRow(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
                         ) {
                             SegmentedButton(
                                 modifier = Modifier.testTag(UiTestTag.settingsThemeOption("system")),
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    0,
-                                    3
-                                ),
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        0,
+                                        3,
+                                    ),
                                 onClick = {
                                     onAction(
-                                        SettingsAction.SetThemeMode(ThemeMode.SYSTEM)
+                                        SettingsAction.SetThemeMode(ThemeMode.SYSTEM),
                                     )
                                 },
                                 selected = uiState.themeMode == ThemeMode.SYSTEM,
-                                label = { Text(stringResource(R.string.settings_theme_system)) }
+                                label = { Text(stringResource(R.string.settings_theme_system)) },
                             )
                             SegmentedButton(
                                 modifier = Modifier.testTag(UiTestTag.settingsThemeOption("light")),
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    1,
-                                    3
-                                ),
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        1,
+                                        3,
+                                    ),
                                 onClick = {
                                     onAction(
-                                        SettingsAction.SetThemeMode(ThemeMode.LIGHT)
+                                        SettingsAction.SetThemeMode(ThemeMode.LIGHT),
                                     )
                                 },
                                 selected = uiState.themeMode == ThemeMode.LIGHT,
-                                label = { Text(stringResource(R.string.settings_theme_light)) }
+                                label = { Text(stringResource(R.string.settings_theme_light)) },
                             )
                             SegmentedButton(
                                 modifier = Modifier.testTag(UiTestTag.settingsThemeOption("dark")),
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    2,
-                                    3
-                                ),
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        2,
+                                        3,
+                                    ),
                                 onClick = {
                                     onAction(
-                                        SettingsAction.SetThemeMode(ThemeMode.DARK)
+                                        SettingsAction.SetThemeMode(ThemeMode.DARK),
                                     )
                                 },
                                 selected = uiState.themeMode == ThemeMode.DARK,
-                                label = { Text(stringResource(R.string.settings_theme_dark)) }
+                                label = { Text(stringResource(R.string.settings_theme_dark)) },
                             )
                         }
                     }
@@ -250,11 +253,11 @@ private fun SwitchableOptionRow(
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
                 text = title,
@@ -271,7 +274,7 @@ private fun SwitchableOptionRow(
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier.testTag(switchTag)
+            modifier = Modifier.testTag(switchTag),
         )
     }
 }
@@ -282,7 +285,7 @@ private fun SettingsScreenPreview() {
     CursoTestingAndroidTheme {
         SettingsContent(
             uiState = SettingsUiState(),
-            onAction = { }
+            onAction = { },
         )
     }
 }

@@ -8,13 +8,10 @@ import com.jujodevs.cursotestingandroid.core.mockwebserver.rules.MockWebServerRu
 import com.jujodevs.cursotestingandroid.core.runTurbineTest
 import com.jujodevs.cursotestingandroid.core.utils.asAsset
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
-import com.jujodevs.cursotestingandroid.productlist.domain.repository.ProductRepository
-import com.jujodevs.cursotestingandroid.productlist.domain.repository.PromotionRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.repository.SettingsRepository
 import com.jujodevs.cursotestingandroid.productlist.domain.usecase.GetProductsUseCase
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -26,7 +23,6 @@ import javax.inject.Inject
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class ProductListViewModelTest {
-
     private companion object {
         private const val EXPECTED_PRODUCT_SIZE = 3
         private const val DAIRY_CATEGORY = "Lácteos"
@@ -51,62 +47,65 @@ class ProductListViewModelTest {
 
     @Before
     fun setUp() {
-        mockWebServer.server.dispatcher = MiniMarketApiDispatcher(
-            productJson = "product_list_default.json".asAsset(),
-        )
+        mockWebServer.server.dispatcher =
+            MiniMarketApiDispatcher(
+                productJson = "product_list_default.json".asAsset(),
+            )
         hiltRule.inject()
 
         viewModel = ProductListViewModel(getProductsUseCase, settingsRepository)
     }
 
     @Test
-    fun givenSuccessfulApi_whenViewModelLoads_thenShowsProducts() = runTurbineTest {
-        val state = viewModel.uiState.testIn(this)
+    fun givenSuccessfulApi_whenViewModelLoads_thenShowsProducts() =
+        runTurbineTest {
+            val state = viewModel.uiState.testIn(this)
 
-        val result = state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
-        assertTrue(result.products.isNotEmpty())
-        assertTrue(result.products.size == EXPECTED_PRODUCT_SIZE)
-        state.cancelAndIgnoreRemainingEvents()
-    }
-
-    @Test
-    fun givenDairyCategorySelected_whenFiltering_thenOnlyDairyProductAreShown() = runTurbineTest {
-        val state = viewModel.uiState.testIn(this)
-        state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
-
-        viewModel.onAction(ProductListAction.SetCategory(DAIRY_CATEGORY))
-
-        val result = state.awaitSuccessMatching { it.selectedCategory == DAIRY_CATEGORY }
-        assertTrue(result.selectedCategory == DAIRY_CATEGORY)
-        assertTrue(result.products.size == 2)
-        assertTrue(result.products.isNotEmpty())
-        assertTrue(result.products.all { it.product.category == DAIRY_CATEGORY })
-        state.cancelAndIgnoreRemainingEvents()
-    }
+            val result = state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
+            assertTrue(result.products.isNotEmpty())
+            assertTrue(result.products.size == EXPECTED_PRODUCT_SIZE)
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
     @Test
-    fun givenProductsLoaded_whenSortingByPriceAsc_thenListIsCorrectlyOrdered() = runTurbineTest {
-        val state = viewModel.uiState.testIn(this)
-        state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
+    fun givenDairyCategorySelected_whenFiltering_thenOnlyDairyProductAreShown() =
+        runTurbineTest {
+            val state = viewModel.uiState.testIn(this)
+            state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
 
-        viewModel.onAction(ProductListAction.SetOrderSelected(SortOption.PRICE_ASC))
+            viewModel.onAction(ProductListAction.SetCategory(DAIRY_CATEGORY))
 
-        val result = state.awaitSuccessMatching { it.sortOption == SortOption.PRICE_ASC }
+            val result = state.awaitSuccessMatching { it.selectedCategory == DAIRY_CATEGORY }
+            assertTrue(result.selectedCategory == DAIRY_CATEGORY)
+            assertTrue(result.products.size == 2)
+            assertTrue(result.products.isNotEmpty())
+            assertTrue(result.products.all { it.product.category == DAIRY_CATEGORY })
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
-        assertEquals(listOf(10.0, 15.0, 20.0), result.products.map { it.product.price })
-        state.cancelAndIgnoreRemainingEvents()
-    }
+    @Test
+    fun givenProductsLoaded_whenSortingByPriceAsc_thenListIsCorrectlyOrdered() =
+        runTurbineTest {
+            val state = viewModel.uiState.testIn(this)
+            state.awaitSuccessMatching { it.products.size == EXPECTED_PRODUCT_SIZE }
+
+            viewModel.onAction(ProductListAction.SetOrderSelected(SortOption.PRICE_ASC))
+
+            val result = state.awaitSuccessMatching { it.sortOption == SortOption.PRICE_ASC }
+
+            assertEquals(listOf(10.0, 15.0, 20.0), result.products.map { it.product.price })
+            state.cancelAndIgnoreRemainingEvents()
+        }
 
     private suspend fun ReceiveTurbine<ProductListUiState>.awaitSuccessMatching(
-        predicate: (ProductListUiState.Success) -> Boolean
+        predicate: (ProductListUiState.Success) -> Boolean,
     ): ProductListUiState.Success {
         while (true) {
-            when(val item = awaitItem()) {
+            when (val item = awaitItem()) {
                 is ProductListUiState.Success -> if (predicate(item)) return item
                 is ProductListUiState.Error -> error("Unexpected error: ${item.message}")
                 is ProductListUiState.Loading -> Unit
             }
         }
     }
-
 }

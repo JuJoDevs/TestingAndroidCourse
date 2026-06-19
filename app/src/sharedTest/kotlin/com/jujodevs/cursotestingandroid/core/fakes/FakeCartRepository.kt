@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class FakeCartRepository : CartRepository {
-
     private val _cartItems = MutableStateFlow(emptyList<CartItem>())
 
     fun setCartItems(items: List<CartItem>) {
@@ -65,7 +64,9 @@ class FakeCartRepository : CartRepository {
         _cartItems.update { emptyList() }
     }
 
-    override suspend fun getCartItemById(productId: String): CartItem? {
-        return _cartItems.value.find { it.productId == productId }
-    }
+    override suspend fun getCartItemById(productId: String): CartItem? =
+        _cartItems.value.find {
+            it.productId ==
+                productId
+        }
 }

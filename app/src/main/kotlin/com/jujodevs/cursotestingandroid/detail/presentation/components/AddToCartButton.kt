@@ -11,7 +11,7 @@ fun AddToCartButton(
     isLoading: Boolean,
     addToCart: () -> Unit,
     modifier: Modifier = Modifier,
-    ) {
+) {
     Surface(
         modifier = modifier,
     ) {

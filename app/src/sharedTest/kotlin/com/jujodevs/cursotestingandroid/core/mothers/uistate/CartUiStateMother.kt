@@ -12,32 +12,36 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductPromotio
 import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 
 object CartUiStateMother {
-
-    val cartSuccess = CartUiState.Success(
-        summary = CartSummary(
-            subtotal = 10.3,
-            discountTotal = 0.7,
-            finalTotal = 11.0
-        ),
-        cartItems = listOf(
-            cartItemWithPromotion(product = bread, quantity = 2),
-            cartItemWithPromotion(product = coffee, quantity = 1, promotion = percent),
-        ),
-        isLoading = false,
-    )
+    val cartSuccess =
+        CartUiState.Success(
+            summary =
+                CartSummary(
+                    subtotal = 10.3,
+                    discountTotal = 0.7,
+                    finalTotal = 11.0,
+                ),
+            cartItems =
+                listOf(
+                    cartItemWithPromotion(product = bread, quantity = 2),
+                    cartItemWithPromotion(product = coffee, quantity = 1, promotion = percent),
+                ),
+            isLoading = false,
+        )
 
     fun cartItemWithPromotion(
         product: Product,
         quantity: Int,
         promotion: ProductPromotion? = null,
     ) = CartItemWithPromotion(
-        cartItem = CartItem(
-            productId = product.id,
-            quantity = quantity,
-        ),
-        item = ProductWithPromotion(
-            product = product,
-            promotion = promotion
-        )
+        cartItem =
+            CartItem(
+                productId = product.id,
+                quantity = quantity,
+            ),
+        item =
+            ProductWithPromotion(
+                product = product,
+                promotion = promotion,
+            ),
     )
 }

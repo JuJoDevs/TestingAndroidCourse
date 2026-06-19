@@ -10,7 +10,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GetPromotionForProductTest {
-
     private val useCase = GetPromotionForProduct()
 
     @Test
@@ -29,15 +28,17 @@ class GetPromotionForProductTest {
     fun give_percent_promotion_when_invoke_then_returns_discounted_price_rounded_to_2_decimals() {
         // Given
         val productId = "product-id"
-        val product = product {
-            withId(productId)
-            withPrice(10.0)
-        }
-        val promotion = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.PERCENT)
-            withValue(15.0)
-        }
+        val product =
+            product {
+                withId(productId)
+                withPrice(10.0)
+            }
+        val promotion =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.PERCENT)
+                withValue(15.0)
+            }
 
         // When
         val response = useCase(product, mapOf(productId to listOf(promotion)))
@@ -53,21 +54,24 @@ class GetPromotionForProductTest {
     fun given_buy_x_pay_y_and_percent_promotions_when_invoke_then_prioritizes_buy_x_pay_y() {
         // Given
         val productId = "product-id"
-        val product = product {
-            withId(productId)
-            withPrice(10.0)
-        }
-        val promotionPercent = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.PERCENT)
-            withValue(15.0)
-        }
-        val promotionBuyXPayY = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.BUY_X_PAY_Y)
-            withValue(2.0)
-            withBuyQuantity(3)
-        }
+        val product =
+            product {
+                withId(productId)
+                withPrice(10.0)
+            }
+        val promotionPercent =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.PERCENT)
+                withValue(15.0)
+            }
+        val promotionBuyXPayY =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.BUY_X_PAY_Y)
+                withValue(2.0)
+                withBuyQuantity(3)
+            }
 
         // When
         val response = useCase(product, mapOf(productId to listOf(promotionPercent, promotionBuyXPayY)))
@@ -84,22 +88,25 @@ class GetPromotionForProductTest {
     fun given_various_buy_x_pay_y_when_invoke_then_prioritizes_minor_value() {
         // Given
         val productId = "product-id"
-        val product = product {
-            withId(productId)
-            withPrice(10.0)
-        }
-        val promotionBuyXPayY1 = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.BUY_X_PAY_Y)
-            withValue(4.0)
-            withBuyQuantity(6)
-        }
-        val promotionBuyXPayY2 = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.BUY_X_PAY_Y)
-            withValue(2.0)
-            withBuyQuantity(3)
-        }
+        val product =
+            product {
+                withId(productId)
+                withPrice(10.0)
+            }
+        val promotionBuyXPayY1 =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.BUY_X_PAY_Y)
+                withValue(4.0)
+                withBuyQuantity(6)
+            }
+        val promotionBuyXPayY2 =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.BUY_X_PAY_Y)
+                withValue(2.0)
+                withBuyQuantity(3)
+            }
 
         // When
         val response = useCase(product, mapOf(productId to listOf(promotionBuyXPayY1, promotionBuyXPayY2)))
@@ -116,20 +123,23 @@ class GetPromotionForProductTest {
     fun given_multiple_percent_promotions_then_invoke_then_returns_highest_discount() {
         // Given
         val productId = "product-id"
-        val product = product {
-            withId(productId)
-            withPrice(10.0)
-        }
-        val promotionLow = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.PERCENT)
-            withValue(5.0)
-        }
-        val promotionHigh = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.PERCENT)
-            withValue(50.0)
-        }
+        val product =
+            product {
+                withId(productId)
+                withPrice(10.0)
+            }
+        val promotionLow =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.PERCENT)
+                withValue(5.0)
+            }
+        val promotionHigh =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.PERCENT)
+                withValue(50.0)
+            }
 
         // When
         val response = useCase(product, mapOf(productId to listOf(promotionLow, promotionHigh)))
@@ -145,20 +155,23 @@ class GetPromotionForProductTest {
     fun given_buy_x_pay_y_without_buy_quantity_when_invoke_then_returns_other_promotion() {
         // Given
         val productId = "product-id"
-        val product = product {
-            withId(productId)
-            withPrice(10.0)
-        }
-        val promotion = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.PERCENT)
-            withValue(5.0)
-        }
-        val brokenBuyXPromotion = promotion {
-            withProductsIds(listOf(productId))
-            withType(PromotionType.BUY_X_PAY_Y)
-            withBuyQuantity(null)
-        }
+        val product =
+            product {
+                withId(productId)
+                withPrice(10.0)
+            }
+        val promotion =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.PERCENT)
+                withValue(5.0)
+            }
+        val brokenBuyXPromotion =
+            promotion {
+                withProductsIds(listOf(productId))
+                withType(PromotionType.BUY_X_PAY_Y)
+                withBuyQuantity(null)
+            }
 
         // When
         val response = useCase(product, mapOf(productId to listOf(promotion, brokenBuyXPromotion)))

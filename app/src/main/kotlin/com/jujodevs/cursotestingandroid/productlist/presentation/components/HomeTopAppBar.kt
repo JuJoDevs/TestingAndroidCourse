@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jujodevs.cursotestingandroid.R
-import com.jujodevs.cursotestingandroid.core.test.UiTestTag
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_BADGE
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_CART
 import com.jujodevs.cursotestingandroid.core.test.UiTestTag.TOP_APP_BAR_FILTER
@@ -46,64 +45,74 @@ fun HomeTopAppBar(
                 fontWeight = FontWeight.Bold,
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ),
         actions = {
             IconButton(
                 modifier = Modifier.testTag(TOP_APP_BAR_FILTER),
-                onClick = { onAction(ProductListAction.SetFiltersVisible(!filterVisible)) }
+                onClick = { onAction(ProductListAction.SetFiltersVisible(!filterVisible)) },
             ) {
                 Icon(
                     imageVector =
-                        if (filterVisible) Icons.Default.FilterListOff
-                        else Icons.Default.FilterList,
+                        if (filterVisible) {
+                            Icons.Default.FilterListOff
+                        } else {
+                            Icons.Default.FilterList
+                        },
                     contentDescription =
-                        if (filterVisible) stringResource(R.string.top_app_bar_hide_filters)
-                        else stringResource(R.string.top_app_bar_show_filters),
+                        if (filterVisible) {
+                            stringResource(R.string.top_app_bar_hide_filters)
+                        } else {
+                            stringResource(R.string.top_app_bar_show_filters)
+                        },
                 )
             }
             IconButton(
                 modifier = Modifier.testTag(TOP_APP_BAR_SETTINGS),
-                onClick = { onAction(ProductListAction.NavToSettings) }
+                onClick = { onAction(ProductListAction.NavToSettings) },
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.top_app_bar_go_to_settings)
+                    contentDescription = stringResource(R.string.top_app_bar_go_to_settings),
                 )
             }
             BadgedBox(
                 badge = {
                     if (cartItemCount > 0) {
                         Badge(
-                            modifier = Modifier
-                                .testTag(TOP_APP_BAR_BADGE)
-                                .offset(x = (-8).dp, y = (8).dp)
+                            modifier =
+                                Modifier
+                                    .testTag(TOP_APP_BAR_BADGE)
+                                    .offset(x = (-8).dp, y = (8).dp),
                         ) {
                             Text(
                                 text =
-                                    if (cartItemCount > 99)
+                                    if (cartItemCount > 99) {
                                         stringResource(R.string.top_app_bar_badge_ninety_nine_plus)
-                                    else cartItemCount.toString(),
+                                    } else {
+                                        cartItemCount.toString()
+                                    },
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                             )
                         }
                     }
-                }
+                },
             ) {
                 IconButton(
                     modifier = Modifier.testTag(TOP_APP_BAR_CART),
-                    onClick = { onAction(ProductListAction.NavToCart) }
+                    onClick = { onAction(ProductListAction.NavToCart) },
                 ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = stringResource(R.string.top_app_bar_go_to_cart)
+                        contentDescription = stringResource(R.string.top_app_bar_go_to_cart),
                     )
                 }
             }
-        }
+        },
     )
 }

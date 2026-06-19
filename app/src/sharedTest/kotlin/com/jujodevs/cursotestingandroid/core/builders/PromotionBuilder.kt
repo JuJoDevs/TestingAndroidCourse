@@ -14,22 +14,29 @@ class PromotionBuilder {
     private var endTime: Instant = Instant.now().plusSeconds(3600)
 
     fun withId(id: String) = apply { this.id = id }
+
     fun withType(type: PromotionType) = apply { this.type = type }
+
     fun withProductsIds(productsIds: List<String>) = apply { this.productsIds = productsIds }
+
     fun withValue(value: Double) = apply { this.value = value }
+
     fun withBuyQuantity(buyQuantity: Int?) = apply { this.buyQuantity = buyQuantity }
+
     fun withStartTime(startTime: Instant) = apply { this.startTime = startTime }
+
     fun withEndTime(endTime: Instant) = apply { this.endTime = endTime }
 
-    fun build() = Promotion(
-        id = id,
-        type = type,
-        productsIds = productsIds,
-        value = value,
-        buyQuantity = buyQuantity,
-        startTime = startTime,
-        endTime = endTime,
-    )
+    fun build() =
+        Promotion(
+            id = id,
+            type = type,
+            productsIds = productsIds,
+            value = value,
+            buyQuantity = buyQuantity,
+            startTime = startTime,
+            endTime = endTime,
+        )
 }
 
 fun promotion(block: PromotionBuilder.() -> Unit = {}) = PromotionBuilder().apply(block).build()

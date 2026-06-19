@@ -23,9 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.jujodevs.cursotestingandroid.R
 
 @Composable
-fun AddToCartButtonNoStock(
-    modifier: Modifier = Modifier,
-) {
+fun AddToCartButtonNoStock(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         shadowElevation = 8.dp,
@@ -34,22 +32,23 @@ fun AddToCartButtonNoStock(
         Box(Modifier.padding(16.dp)) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {  },
+                onClick = { },
                 enabled = false,
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    disabledContentColor = MaterialTheme.colorScheme.primary
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        disabledContentColor = MaterialTheme.colorScheme.primary,
+                    ),
             ) {
                 Icon(
                     imageVector = Icons.Default.Warning,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.product_detail_no_stock_available),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }

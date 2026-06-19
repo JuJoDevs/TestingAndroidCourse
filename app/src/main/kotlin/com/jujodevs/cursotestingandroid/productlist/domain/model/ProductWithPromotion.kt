@@ -10,10 +10,11 @@ sealed interface ProductPromotion {
         val percent: Double,
         val discountedPrice: Double,
         val label: String,
-    ): ProductPromotion
+    ) : ProductPromotion
+
     data class BuyXPayY(
         val buy: Int,
         val pay: Int,
         val label: String,
-    ): ProductPromotion
+    ) : ProductPromotion
 }

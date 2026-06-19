@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class FakeProductRepository : ProductRepository {
-
     private val _products = MutableStateFlow(emptyList<Product>())
     var refreshProductsCalls = 0
 
@@ -19,17 +18,15 @@ class FakeProductRepository : ProductRepository {
 
     override fun getProducts(): Flow<List<Product>> = _products.asStateFlow()
 
-    override fun getProductById(id: String): Flow<Product?> {
-        return _products.asStateFlow().map { products ->
+    override fun getProductById(id: String): Flow<Product?> =
+        _products.asStateFlow().map { products ->
             products.find { it.id == id }
         }
-    }
 
-    override fun getProductsById(ids: Set<String>): Flow<List<Product>> {
-        return _products.asStateFlow().map { products ->
+    override fun getProductsById(ids: Set<String>): Flow<List<Product>> =
+        _products.asStateFlow().map { products ->
             products.filter { it.id in ids }
         }
-    }
 
     override suspend fun refreshProducts() {
         refreshProductsCalls++

@@ -4,10 +4,23 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.ProductWithProm
 import com.jujodevs.cursotestingandroid.productlist.domain.model.SortOption
 
 sealed interface ProductListAction {
-    data class SetCategory(val category: String?): ProductListAction
-    data class SetOrderSelected(val sortOption: SortOption): ProductListAction
-    data class SetFiltersVisible(val showFilters: Boolean): ProductListAction
-    data object NavToSettings: ProductListAction
-    data class NavToProductDetail(val product: ProductWithPromotion): ProductListAction
-    data object NavToCart: ProductListAction
+    data class SetCategory(
+        val category: String?,
+    ) : ProductListAction
+
+    data class SetOrderSelected(
+        val sortOption: SortOption,
+    ) : ProductListAction
+
+    data class SetFiltersVisible(
+        val showFilters: Boolean,
+    ) : ProductListAction
+
+    data object NavToSettings : ProductListAction
+
+    data class NavToProductDetail(
+        val product: ProductWithPromotion,
+    ) : ProductListAction
+
+    data object NavToCart : ProductListAction
 }

@@ -7,27 +7,32 @@ import com.jujodevs.cursotestingandroid.productlist.domain.model.Product
 fun ProductResponse.toEntity(): ProductEntity? {
     val finalPrice = priceCents?.div(100.0) ?: 0.0
 
-    return if (id == null || name == null) null
-    else ProductEntity(
-        id = id,
-        name = name,
-        description = description,
-        price = finalPrice,
-        category = category,
-        stock = stock,
-        imageUrl = imageUrl
-    )
+    return if (id == null || name == null) {
+        null
+    } else {
+        ProductEntity(
+            id = id,
+            name = name,
+            description = description,
+            price = finalPrice,
+            category = category,
+            stock = stock,
+            imageUrl = imageUrl,
+        )
+    }
 }
 
-fun ProductEntity.toDomain(): Product? {
-    return if (category == null) null
-    else Product(
-        id = id,
-        name = name,
-        description = description.orEmpty(),
-        price = price,
-        category = category,
-        stock = stock ?: 0,
-        imageUrl = imageUrl
-    )
-}
+fun ProductEntity.toDomain(): Product? =
+    if (category == null) {
+        null
+    } else {
+        Product(
+            id = id,
+            name = name,
+            description = description.orEmpty(),
+            price = price,
+            category = category,
+            stock = stock ?: 0,
+            imageUrl = imageUrl,
+        )
+    }

@@ -65,22 +65,23 @@ fun ProductListScreen(
         }
     }
 
-    val cartItemCount = remember(cartUiState) {
-        when (val state = cartUiState) {
-            is CartUiState.Error -> 0
-            CartUiState.Loading -> 0
-            is CartUiState.Success -> {
-                state.cartItems.sumOf { it.cartItem.quantity }
+    val cartItemCount =
+        remember(cartUiState) {
+            when (val state = cartUiState) {
+                is CartUiState.Error -> 0
+                CartUiState.Loading -> 0
+                is CartUiState.Success -> {
+                    state.cartItems.sumOf { it.cartItem.quantity }
+                }
             }
         }
-    }
 
     ProductListContent(
         uiState = uiState,
         cartItemCount = cartItemCount,
         filterVisible = filterVisible,
         snackbarHostState = snackbarHostState,
-        onAction = productListViewModel::onAction
+        onAction = productListViewModel::onAction,
     )
 }
 
@@ -97,16 +98,17 @@ internal fun ProductListContent(
             HomeTopAppBar(
                 filterVisible = filterVisible,
                 cartItemCount = cartItemCount,
-                onAction = onAction
+                onAction = onAction,
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+            contentAlignment = Alignment.Center,
         ) {
             when (val state = uiState) {
                 ProductListUiState.Loading -> {
@@ -123,30 +125,32 @@ internal fun ProductListContent(
 
                 is ProductListUiState.Success -> {
                     Column(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         AnimatedVisibility(filterVisible) {
                             FiltersMenu(
                                 state = state,
-                                onAction = onAction
+                                onAction = onAction,
                             )
                         }
 
                         Text(
                             text = stringResource(R.string.product_list_count, state.products.size),
-                            modifier = Modifier.padding(
-                                horizontal = 16.dp,
-                                vertical = 8.dp
-                            ),
+                            modifier =
+                                Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 8.dp,
+                                ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
                         )
                         if (state.products.isEmpty()) {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(32.dp),
-                                contentAlignment = Alignment.Center
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(32.dp),
+                                contentAlignment = Alignment.Center,
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -154,28 +158,28 @@ internal fun ProductListContent(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.product_list_empty_icon),
-                                        style = MaterialTheme.typography.displayMedium
+                                        style = MaterialTheme.typography.displayMedium,
                                     )
                                     Text(
                                         text = stringResource(R.string.product_list_no_products),
                                         style = MaterialTheme.typography.titleLarge,
-                                        color = MaterialTheme.colorScheme.tertiary
+                                        color = MaterialTheme.colorScheme.tertiary,
                                     )
                                 }
                             }
                         } else {
                             LazyColumn(
-                                modifier = Modifier.testTag(PRODUCT_LIST_LIST)
+                                modifier = Modifier.testTag(PRODUCT_LIST_LIST),
                             ) {
                                 items(state.products) { item ->
                                     ProductItem(
                                         item = item,
                                         onClick = {
                                             onAction(
-                                                ProductListAction.NavToProductDetail(item)
+                                                ProductListAction.NavToProductDetail(item),
                                             )
                                         },
-                                        modifier = Modifier.animateItem()
+                                        modifier = Modifier.animateItem(),
                                     )
                                 }
                             }
@@ -187,41 +191,43 @@ internal fun ProductListContent(
     }
 }
 
-
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun SettingsScreenPreview() {
     val products =
         listOf(
             ProductWithPromotion(
-                product = Product(
-                    id = "causae",
-                    name = "Maryanne Bird",
-                    description = "principes",
-                    price = 2.3,
-                    category = "ferri",
-                    stock = 5867,
-                    imageUrl = "https://www.google.com/#q=dicunt"
-                )
-            )
+                product =
+                    Product(
+                        id = "causae",
+                        name = "Maryanne Bird",
+                        description = "principes",
+                        price = 2.3,
+                        category = "ferri",
+                        stock = 5867,
+                        imageUrl = "https://www.google.com/#q=dicunt",
+                    ),
+            ),
         )
 
     CursoTestingAndroidTheme {
         ProductListContent(
-            uiState = ProductListUiState.Success(
-                products = products,
-                categories = listOf(
-                    "category-1",
-                    "category-2",
-                    "category-3"
+            uiState =
+                ProductListUiState.Success(
+                    products = products,
+                    categories =
+                        listOf(
+                            "category-1",
+                            "category-2",
+                            "category-3",
+                        ),
+                    selectedCategory = "category-2",
+                    sortOption = SortOption.NONE,
                 ),
-                selectedCategory = "category-2",
-                sortOption = SortOption.NONE,
-            ),
             cartItemCount = 1,
             filterVisible = true,
             snackbarHostState = remember { SnackbarHostState() },
-            onAction = { }
+            onAction = { },
         )
     }
 }

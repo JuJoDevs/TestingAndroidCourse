@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 
 class GroupPromotionsByProductIdTest {
-
     private lateinit var useCase: GroupPromotionsByProductId
 
     @Before
@@ -50,8 +49,16 @@ class GroupPromotionsByProductIdTest {
     @Test
     fun `GIVEN multiple promotions for same product WHEN invoke THEN returns map with all promotions for that product`() {
         val productId = "p1"
-        val promo1 = promotion { withId("promo1"); withProductsIds(listOf(productId)) }
-        val promo2 = promotion { withId("promo2"); withProductsIds(listOf(productId)) }
+        val promo1 =
+            promotion {
+                withId("promo1")
+                withProductsIds(listOf(productId))
+            }
+        val promo2 =
+            promotion {
+                withId("promo2")
+                withProductsIds(listOf(productId))
+            }
 
         val result = useCase(listOf(promo1, promo2))
 
@@ -63,8 +70,16 @@ class GroupPromotionsByProductIdTest {
     fun `GIVEN promotions with overlapping products WHEN invoke THEN groups correctly`() {
         val p1 = "p1"
         val p2 = "p2"
-        val promo1 = promotion { withId("promo1"); withProductsIds(listOf(p1, p2)) }
-        val promo2 = promotion { withId("promo2"); withProductsIds(listOf(p2)) }
+        val promo1 =
+            promotion {
+                withId("promo1")
+                withProductsIds(listOf(p1, p2))
+            }
+        val promo2 =
+            promotion {
+                withId("promo2")
+                withProductsIds(listOf(p2))
+            }
 
         val result = useCase(listOf(promo1, promo2))
 

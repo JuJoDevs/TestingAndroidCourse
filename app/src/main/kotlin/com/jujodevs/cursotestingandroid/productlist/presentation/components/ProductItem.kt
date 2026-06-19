@@ -49,37 +49,40 @@ fun ProductItem(
 ) {
     val product = item.product
     val promotion = item.promotion
-    val promoBadge = when (promotion) {
-        is ProductPromotion.BuyXPayY -> promotion.label
-        is ProductPromotion.Percent -> promotion.label
-        null -> null
-    }
+    val promoBadge =
+        when (promotion) {
+            is ProductPromotion.BuyXPayY -> promotion.label
+            is ProductPromotion.Percent -> promotion.label
+            null -> null
+        }
     var loadImageSuccess by rememberSaveable { mutableStateOf(false) }
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag(productListItem(product.id))
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp
-            )
-            .clickable { onClick(item) },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .testTag(productListItem(product.id))
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp,
+                ).clickable { onClick(item) },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .size(88.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(88.dp)
+                        .clip(RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
                     model = product.imageUrl,
@@ -89,8 +92,11 @@ fun ProductItem(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize(),
                     colorFilter =
-                        if (loadImageSuccess) null
-                        else ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                        if (loadImageSuccess) {
+                            null
+                        } else {
+                            ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                        },
                     onLoading = { loadImageSuccess = false },
                     onSuccess = { loadImageSuccess = true },
                     onError = { loadImageSuccess = false },
@@ -98,17 +104,17 @@ fun ProductItem(
 
                 if (promoBadge != null) {
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(6.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.error,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .padding(
-                                horizontal = 6.dp,
-                                vertical = 2.dp
-                            )
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopStart)
+                                .padding(6.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.error,
+                                    shape = RoundedCornerShape(4.dp),
+                                ).padding(
+                                    horizontal = 6.dp,
+                                    vertical = 2.dp,
+                                ),
                     ) {
                         Text(
                             text = promoBadge,
@@ -122,7 +128,7 @@ fun ProductItem(
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = product.name,
@@ -148,11 +154,11 @@ fun ProductItem(
                 ) {
                     if (promotion is ProductPromotion.Percent) {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 Text(
                                     text = stringResource(R.string.product_item_old_price),
@@ -160,11 +166,12 @@ fun ProductItem(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 Text(
-                                    text = String.format(
-                                        Locale.getDefault(),
-                                        "%.2f",
-                                        product.price
-                                    ),
+                                    text =
+                                        String.format(
+                                            Locale.getDefault(),
+                                            "%.2f",
+                                            product.price,
+                                        ),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     textDecoration = TextDecoration.LineThrough,
@@ -172,7 +179,7 @@ fun ProductItem(
                             }
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 Text(
                                     text = stringResource(R.string.product_item_new_price),
@@ -180,11 +187,12 @@ fun ProductItem(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 Text(
-                                    text = String.format(
-                                        Locale.getDefault(),
-                                        "%.2f",
-                                        promotion.discountedPrice
-                                    ),
+                                    text =
+                                        String.format(
+                                            Locale.getDefault(),
+                                            "%.2f",
+                                            promotion.discountedPrice,
+                                        ),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold,
@@ -193,11 +201,12 @@ fun ProductItem(
                         }
                     } else {
                         Text(
-                            text = String.format(
-                                Locale.getDefault(),
-                                "%.2f",
-                                product.price
-                            ),
+                            text =
+                                String.format(
+                                    Locale.getDefault(),
+                                    "%.2f",
+                                    product.price,
+                                ),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                         )

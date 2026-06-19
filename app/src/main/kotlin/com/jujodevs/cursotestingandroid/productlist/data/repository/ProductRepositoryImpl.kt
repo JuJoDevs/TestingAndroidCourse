@@ -19,53 +19,55 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ProductRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource,
-    private val dispatchers: DispatchersProvider,
-): ProductRepository {
+class ProductRepositoryImpl
+    @Inject
+    constructor(
+        private val remoteDataSource: RemoteDataSource,
+        private val localDataSource: LocalDataSource,
+        private val dispatchers: DispatchersProvider,
+    ) : ProductRepository {
+        private val refreshScope = CoroutineScope(SupervisorJob() + dispatchers.io)
+        private val refreshMutex = Mutex()
 
-    private val refreshScope = CoroutineScope(SupervisorJob() + dispatchers.io)
-    private val refreshMutex = Mutex()
-
-    override fun getProducts(): Flow<List<Product>> {
-        return localDataSource.getAllProducts()
-            .map { entities -> entities.mapNotNull { entity -> entity.toDomain() } }
-            .onStart {
-                refreshScope.launch {
-                    if (!refreshMutex.tryLock()) return@launch
-                    try {
-                        refreshProducts()
-                    } catch (e: Exception) {
-                        coroutineContext.ensureActive()
-                        // refresh log
-                    } finally {
-                        refreshMutex.unlock()
+        override fun getProducts(): Flow<List<Product>> {
+            return localDataSource
+                .getAllProducts()
+                .map { entities -> entities.mapNotNull { entity -> entity.toDomain() } }
+                .onStart {
+                    refreshScope.launch {
+                        if (!refreshMutex.tryLock()) return@launch
+                        try {
+                            refreshProducts()
+                        } catch (e: Exception) {
+                            coroutineContext.ensureActive()
+                            // refresh log
+                        } finally {
+                            refreshMutex.unlock()
+                        }
                     }
+                }.catch {
+                    // Important log
                 }
-            }.catch {
-                // Important log
+        }
+
+        override fun getProductById(id: String): Flow<Product?> =
+            localDataSource
+                .getProductById(id)
+                .map { entity -> entity?.toDomain() }
+                .catch {
+                    // Important log
+                }
+
+        override fun getProductsById(ids: Set<String>): Flow<List<Product>> =
+            localDataSource
+                .getProductsById(ids)
+                .map { entities -> entities.mapNotNull { it.toDomain() } }
+
+        override suspend fun refreshProducts() {
+            withContext(dispatchers.io) {
+                val products = remoteDataSource.getProducts().getOrThrow()
+                val productsEntity = products.mapNotNull { it.toEntity() }
+                localDataSource.saveProducts(productsEntity)
             }
-    }
-
-    override fun getProductById(id: String): Flow<Product?> {
-        return localDataSource.getProductById(id)
-            .map { entity -> entity?.toDomain() }
-            .catch {
-                // Important log
-            }
-    }
-
-    override fun getProductsById(ids: Set<String>): Flow<List<Product>> {
-        return localDataSource.getProductsById(ids)
-            .map { entities ->  entities.mapNotNull { it.toDomain() } }
-    }
-
-    override suspend fun refreshProducts() {
-        withContext(dispatchers.io) {
-            val products = remoteDataSource.getProducts().getOrThrow()
-            val productsEntity = products.mapNotNull { it.toEntity() }
-            localDataSource.saveProducts(productsEntity)
         }
     }
-}

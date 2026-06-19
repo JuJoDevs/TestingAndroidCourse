@@ -22,8 +22,11 @@ import javax.inject.Inject
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class PromotionRepositoryImplTest {
-    @get:Rule(order = 0) val mockWebServer = MockWebServerRule()
-    @get:Rule(order = 1) val hiltRule = HiltAndroidRule(this)
+    @get:Rule(order = 0)
+    val mockWebServer = MockWebServerRule()
+
+    @get:Rule(order = 1)
+    val hiltRule = HiltAndroidRule(this)
 
     @Inject lateinit var promotionRepository: PromotionRepository
 
@@ -39,64 +42,72 @@ class PromotionRepositoryImplTest {
 
     private fun readJson(fileName: String): String {
         val context = InstrumentationRegistry.getInstrumentation().context
-        return context.assets.open(fileName).bufferedReader().use { it.readText() }
+        return context.assets
+            .open(fileName)
+            .bufferedReader()
+            .use { it.readText() }
     }
 
     @Test
-    fun givenActivePromotionsJson_whenRefreshIsCalled_thenFlowEmitsActivePromotions() = runTest {
-        val json = readJson("promotions_percent.json")
-        mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
+    fun givenActivePromotionsJson_whenRefreshIsCalled_thenFlowEmitsActivePromotions() =
+        runTest {
+            val json = readJson("promotions_percent.json")
+            mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
 
-        promotionRepository.refreshPromotions()
+            promotionRepository.refreshPromotions()
 
-        val promotions = promotionRepository.getActivePromotions().first()
-        assertTrue(promotions.isNotEmpty())
-        assertTrue(promotions.size == 1)
-        assertTrue(promotions.find { it.id == "promo1" }?.productsIds == listOf("p1"))
-    }
-
-    @Test
-    fun givenEmptyPromotionsJson_whenRefreshIsCAlled_thenListIsEmpty() = runTest {
-        mockWebServer.server.enqueue(MockResponse().setBody("""{"promotions":[]}""").setResponseCode(200))
-
-        promotionRepository.refreshPromotions()
-
-        val promotions = promotionRepository.getActivePromotions().first()
-        assertTrue(promotions.isEmpty())
-    }
+            val promotions = promotionRepository.getActivePromotions().first()
+            assertTrue(promotions.isNotEmpty())
+            assertTrue(promotions.size == 1)
+            assertTrue(promotions.find { it.id == "promo1" }?.productsIds == listOf("p1"))
+        }
 
     @Test
-    fun givenBuyXPayYJson_whenRefreshIsCalled_thenDomainMapsQuantitiesCorrectly() = runTest {
-        val json = readJson("promotions_buy_x_pay_y.json")
-        mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
+    fun givenEmptyPromotionsJson_whenRefreshIsCAlled_thenListIsEmpty() =
+        runTest {
+            mockWebServer.server.enqueue(MockResponse().setBody("""{"promotions":[]}""").setResponseCode(200))
 
-        promotionRepository.refreshPromotions()
+            promotionRepository.refreshPromotions()
 
-        val promotions = promotionRepository.getActivePromotions().first()
-        val promotion = promotions.find { it.id == "promo1" }
-        assertTrue(promotions.isNotEmpty())
-        assertTrue(promotions.size == 1)
-        assertTrue(promotion?.productsIds == listOf("p1"))
-        assertTrue(promotion?.value == 2.0)
-        assertTrue(promotion?.buyQuantity == 3)
-    }
+            val promotions = promotionRepository.getActivePromotions().first()
+            assertTrue(promotions.isEmpty())
+        }
+
+    @Test
+    fun givenBuyXPayYJson_whenRefreshIsCalled_thenDomainMapsQuantitiesCorrectly() =
+        runTest {
+            val json = readJson("promotions_buy_x_pay_y.json")
+            mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
+
+            promotionRepository.refreshPromotions()
+
+            val promotions = promotionRepository.getActivePromotions().first()
+            val promotion = promotions.find { it.id == "promo1" }
+            assertTrue(promotions.isNotEmpty())
+            assertTrue(promotions.size == 1)
+            assertTrue(promotion?.productsIds == listOf("p1"))
+            assertTrue(promotion?.value == 2.0)
+            assertTrue(promotion?.buyQuantity == 3)
+        }
 
     @Test(expected = Exception::class)
-    fun givenServerReturns500_whenRefreshIsCalled_thenThrowException() = runTest {
-        mockWebServer.server.enqueue(MockResponse().setResponseCode(500))
+    fun givenServerReturns500_whenRefreshIsCalled_thenThrowException() =
+        runTest {
+            mockWebServer.server.enqueue(MockResponse().setResponseCode(500))
 
-        promotionRepository.refreshPromotions()
-    }
+            promotionRepository.refreshPromotions()
+        }
 
     @Test
-    fun givenPromotionsEndpoint_whenRefreshIsCalled_thenRequestIsGetCorrectPath() = runTest {
-        val json = readJson("promotions_buy_x_pay_y.json")
-        mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
-        promotionRepository.refreshPromotions()
+    fun givenPromotionsEndpoint_whenRefreshIsCalled_thenRequestIsGetCorrectPath() =
+        runTest {
+            val json = readJson("promotions_buy_x_pay_y.json")
+            mockWebServer.server.enqueue(MockResponse().setBody(json).setResponseCode(200))
+            promotionRepository.refreshPromotions()
 
-        val request = mockWebServer.server.takeRequest()
+            val request = mockWebServer.server.takeRequest()
 
-        assertEquals("GET", request.method)
-        assertTrue(request.path?.contains("data/promotions.json") == true)
-    }
+            assertEquals("GET", request.method)
+            assertTrue(request.path?.contains("data/promotions.json") == true)
+        }
 }
