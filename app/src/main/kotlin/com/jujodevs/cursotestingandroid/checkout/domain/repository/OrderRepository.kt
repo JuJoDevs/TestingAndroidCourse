@@ -4,5 +4,5 @@ import com.jujodevs.cursotestingandroid.checkout.domain.model.OrderConfirmation
 
 interface OrderRepository {
 
-    suspend fun placeOrder(): OrderConfirmation
+    suspend fun placeOrder(): Result<OrderConfirmation>
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class OrderRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource
 ): OrderRepository {
-    override suspend fun placeOrder(): OrderConfirmation {
-        return remoteDataSource.placeOrder().getOrThrow().toDomain()
+    override suspend fun placeOrder(): Result<OrderConfirmation> {
+        return remoteDataSource.placeOrder().map { it.toDomain() }
     }
 }
