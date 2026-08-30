@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,4 +61,53 @@ class CheckoutViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = CheckoutUiState.Loading,
     )
+
+    fun onAction(action: CheckoutAction) {
+        when(action) {
+            CheckoutAction.GoBack -> onBack()
+            CheckoutAction.Retry -> onRetry()
+            is CheckoutAction.ChangeName -> onNameChange(action.name)
+            is CheckoutAction.ChangeAddress -> onAddressChange(action.address)
+            is CheckoutAction.ChangeEmail -> onEmailChange(action.email)
+            CheckoutAction.Confirm -> onConfirm()
+        }
+    }
+
+    private fun onBack() {
+        viewModelScope.launch {
+            _events.emit(CheckoutEvent.GoBack)
+        }
+    }
+
+    private fun onRetry() {
+        submission.value = Submission.Idle
+    }
+
+    private fun onNameChange(name: String) {
+        formState.update { it.copy(name = name) }
+    }
+
+    private fun onAddressChange(address: String) {
+        formState.update { it.copy(address = address) }
+    }
+
+    private fun onEmailChange(email: String) {
+        formState.update { it.copy(email = email) }
+    }
+
+    private fun onConfirm() {
+        if (!formState.value.validate().isValid) return
+
+        viewModelScope.launch {
+            submission.update { Submission.Submitting }
+            placeOrderUseCase()
+                .onSuccess { orderConfirmation ->
+                    submission.update { Submission.Success(orderConfirmation) }
+                }
+                .onFailure { e ->
+                    submission.update { Submission.Failed(e.message.orEmpty()) }
+                    _events.emit(CheckoutEvent.ShowMessage(e.message.orEmpty()))
+                }
+        }
+    }
 }

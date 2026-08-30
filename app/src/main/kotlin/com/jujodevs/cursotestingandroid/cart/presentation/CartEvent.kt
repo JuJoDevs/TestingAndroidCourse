@@ -6,4 +6,6 @@ sealed interface CartEvent {
     data class ShowMessage(
         val message: String,
     ) : CartEvent
+
+    data object NavigateToCheckout : CartEvent
 }

@@ -81,6 +81,8 @@ class CartViewModel
                         action.productId,
                         action.currentQuantity,
                     )
+
+                CartAction.NavigateToCheckout -> onNavigateToCheckout()
             }
         }
 
@@ -146,5 +148,9 @@ class CartViewModel
             } else {
                 removeFromCart(productId)
             }
+        }
+
+        private fun onNavigateToCheckout() {
+            viewModelScope.launch { _events.emit(CartEvent.NavigateToCheckout) }
         }
     }

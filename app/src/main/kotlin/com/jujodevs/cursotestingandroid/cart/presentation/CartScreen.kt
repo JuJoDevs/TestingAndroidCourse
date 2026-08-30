@@ -70,6 +70,7 @@ import java.util.Currency
 @Composable
 fun CartScreen(
     onBack: () -> Unit,
+    navigateToCheckout: () -> Unit,
     cartViewModel: CartViewModel = hiltViewModel(),
 ) {
     val uiState by cartViewModel.uiState.collectAsStateWithLifecycle()
@@ -79,6 +80,7 @@ fun CartScreen(
         when (event) {
             is CartEvent.GoBack -> onBack()
             is CartEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
+            CartEvent.NavigateToCheckout -> navigateToCheckout()
         }
     }
 
@@ -194,7 +196,9 @@ fun CartSuccessStateScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.testTag(CART_EMPTY).fillMaxSize(),
+                    modifier = Modifier
+                        .testTag(CART_EMPTY)
+                        .fillMaxSize(),
                 ) {
                     Spacer(Modifier.height(54.dp))
                     Text(
@@ -245,6 +249,13 @@ fun CartSuccessStateScreen(
                                 .fillMaxWidth()
                                 .padding(16.dp),
                     )
+
+                    Button(
+                        onClick = { onAction(CartAction.NavigateToCheckout) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = stringResource(R.string.cart_checkout))
+                    }
                 }
             }
         }

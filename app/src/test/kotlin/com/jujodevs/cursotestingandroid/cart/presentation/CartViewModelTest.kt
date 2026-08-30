@@ -138,4 +138,16 @@ class CartViewModelTest {
             assertTrue(updatedEvent is CartEvent.GoBack)
             event.cancelAndIgnoreRemainingEvents()
         }
+
+    @Test
+    fun `WHEN receive navigate to checkout action THEN emits navigate to checkout event`() =
+        runTurbineTest {
+            val event = viewModel.events.testIn(this)
+
+            viewModel.onAction(CartAction.NavigateToCheckout)
+
+            val updatedEvent = event.awaitItem()
+            assertTrue(updatedEvent is CartEvent.NavigateToCheckout)
+            event.cancelAndIgnoreRemainingEvents()
+        }
 }
