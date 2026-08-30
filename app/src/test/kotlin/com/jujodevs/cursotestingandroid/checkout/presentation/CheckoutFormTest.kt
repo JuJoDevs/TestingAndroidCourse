@@ -1,5 +1,7 @@
 package com.jujodevs.cursotestingandroid.checkout.presentation
 
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -9,49 +11,73 @@ import org.junit.Test
  * SUT: [CheckoutForm.validate], [CheckoutFormErrors.isValid], [FieldError].
  */
 class CheckoutFormTest {
-
     @Test
     fun `given blank name when validate then nameError is REQUIRED`() {
-        // GIVEN
+        val form =
+            CheckoutForm(
+                name = "",
+                address = "Calle Mayor 1",
+                email = "test@example.com",
+            )
 
-        // WHEN
+        val errors = form.validate()
 
-        // THEN
+        assertEquals(FieldError.REQUIRED, errors.nameError)
     }
 
     @Test
     fun `given blank address when validate then addressError is REQUIRED`() {
-        // GIVEN
+        val form =
+            CheckoutForm(
+                name = "Juan",
+                address = "",
+                email = "test@example.com",
+            )
 
-        // WHEN
+        val errors = form.validate()
 
-        // THEN
+        assertEquals(FieldError.REQUIRED, errors.addressError)
     }
 
     @Test
     fun `given blank email when validate then emailError is REQUIRED`() {
-        // GIVEN
+        val form =
+            CheckoutForm(
+                name = "Juan",
+                address = "Calle Mayor 1",
+                email = "",
+            )
 
-        // WHEN
+        val errors = form.validate()
 
-        // THEN
+        assertEquals(FieldError.REQUIRED, errors.emailError)
     }
 
     @Test
     fun `given malformed email when validate then emailError is INVALID_EMAIL`() {
-        // GIVEN
+        val form =
+            CheckoutForm(
+                name = "Juan",
+                address = "Calle Mayor 1",
+                email = "invalid-email",
+            )
 
-        // WHEN
+        val errors = form.validate()
 
-        // THEN
+        assertEquals(FieldError.INVALID_EMAIL, errors.emailError)
     }
 
     @Test
     fun `given all fields valid when validate then errors isValid is true`() {
-        // GIVEN
+        val form =
+            CheckoutForm(
+                name = "Juan",
+                address = "Calle Mayor 1",
+                email = "test@example.com",
+            )
 
-        // WHEN
+        val errors = form.validate()
 
-        // THEN
+        assertTrue(errors.isValid)
     }
 }

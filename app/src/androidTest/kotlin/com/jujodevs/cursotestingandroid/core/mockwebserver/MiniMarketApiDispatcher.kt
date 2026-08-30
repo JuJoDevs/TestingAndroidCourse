@@ -7,9 +7,13 @@ import okhttp3.mockwebserver.RecordedRequest
 class MiniMarketApiDispatcher(
     private val productJson: String,
     private val promoJson: String = """{"promotions":[]}""",
+    private val orderJson: String = "",
+    private val orderResponseCode: Int = 200,
 ) : Dispatcher() {
     override fun dispatch(request: RecordedRequest): MockResponse =
         when {
+            request.path?.contains("order_confirmation.json") == true && orderJson.isNotBlank() ->
+                MockResponse().setBody(orderJson).setResponseCode(orderResponseCode)
             request.path?.contains("promotions.json") == true ->
                 MockResponse().setBody(promoJson).setResponseCode(200)
             request.path?.contains("products.json") == true ->
