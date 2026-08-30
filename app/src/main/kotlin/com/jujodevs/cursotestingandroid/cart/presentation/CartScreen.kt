@@ -196,9 +196,10 @@ fun CartSuccessStateScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier
-                        .testTag(CART_EMPTY)
-                        .fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .testTag(CART_EMPTY)
+                            .fillMaxSize(),
                 ) {
                     Spacer(Modifier.height(54.dp))
                     Text(

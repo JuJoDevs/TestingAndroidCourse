@@ -19,12 +19,14 @@ data class CheckoutFormErrors(
 private val EMAIL_REGEX =
     """[a-zA-Z0-9+._%\-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}(\.[a-zA-Z0-9][a-zA-Z0-9\-]{0,25})+""".toRegex()
 
-fun CheckoutForm.validate(): CheckoutFormErrors = CheckoutFormErrors(
-    nameError = if (name.isBlank()) FieldError.REQUIRED else null,
-    addressError = if (address.isBlank()) FieldError.REQUIRED else null,
-    emailError = when {
-        email.isBlank() -> FieldError.REQUIRED
-        !EMAIL_REGEX.matches(email) -> FieldError.INVALID_EMAIL
-        else -> null
-    },
-)
+fun CheckoutForm.validate(): CheckoutFormErrors =
+    CheckoutFormErrors(
+        nameError = if (name.isBlank()) FieldError.REQUIRED else null,
+        addressError = if (address.isBlank()) FieldError.REQUIRED else null,
+        emailError =
+            when {
+                email.isBlank() -> FieldError.REQUIRED
+                !EMAIL_REGEX.matches(email) -> FieldError.INVALID_EMAIL
+                else -> null
+            },
+    )

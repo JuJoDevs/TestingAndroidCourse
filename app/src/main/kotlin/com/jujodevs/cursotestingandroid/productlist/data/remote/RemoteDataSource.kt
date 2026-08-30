@@ -22,8 +22,7 @@ class RemoteDataSource
         suspend fun getPromotions(): Result<List<PromotionResponse>> =
             safeCall { miniMarketApiService.getPromotions().promotions }
 
-        suspend fun placeOrder(): Result<OrderConfirmationResponse> =
-            safeCall { miniMarketApiService.placeOrder() }
+        suspend fun placeOrder(): Result<OrderConfirmationResponse> = safeCall { miniMarketApiService.placeOrder() }
 
         private suspend fun <T> safeCall(call: suspend () -> T): Result<T> =
             try {

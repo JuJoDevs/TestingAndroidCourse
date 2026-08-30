@@ -97,8 +97,7 @@ object TestDataModule {
 
     @Provides
     @Singleton
-    fun providesOrderRepository(orderRepositoryImpl: OrderRepositoryImpl): OrderRepository =
-        orderRepositoryImpl
+    fun providesOrderRepository(orderRepositoryImpl: OrderRepositoryImpl): OrderRepository = orderRepositoryImpl
 
     @Provides
     @Singleton

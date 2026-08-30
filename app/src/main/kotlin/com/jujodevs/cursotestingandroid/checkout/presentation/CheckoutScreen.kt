@@ -37,8 +37,8 @@ fun CheckoutScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    ObserveAsEvents(viewModel.event) { event ->
-        when(event) {
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
             is CheckoutEvent.ShowMessage -> snackbarHostState.showSnackbar(event.message)
             CheckoutEvent.GoBack -> onBack()
         }
@@ -47,7 +47,7 @@ fun CheckoutScreen(
     CheckoutContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
     )
 }
 
@@ -67,11 +67,12 @@ fun CheckoutContent(
         },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
-            when(uiState) {
+            when (uiState) {
                 CheckoutUiState.Loading -> {
                     CircularProgressIndicator()
                 }
@@ -79,13 +80,14 @@ fun CheckoutContent(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
                     ) {
                         Text(uiState.message)
                         Button(
-                            onClick = { onAction(CheckoutAction.Retry) }
+                            onClick = { onAction(CheckoutAction.Retry) },
                         ) {
                             Text(stringResource(R.string.checkout_retry))
                         }
@@ -95,34 +97,38 @@ fun CheckoutContent(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
                     ) {
                         Text(
-                            text = stringResource(
-                                R.string.checkout_order_confirmed,
-                                uiState.confirmation.orderId,
-                            ),
+                            text =
+                                stringResource(
+                                    R.string.checkout_order_confirmed,
+                                    uiState.confirmation.orderId,
+                                ),
                         )
                         Text(
-                            text = stringResource(
-                                R.string.checkout_estimated_time,
-                                uiState.confirmation.etaMinutes,
-                            ),
+                            text =
+                                stringResource(
+                                    R.string.checkout_estimated_time,
+                                    uiState.confirmation.etaMinutes,
+                                ),
                         )
                         Text(
-                            text = stringResource(
-                                R.string.checkout_price,
-                                uiState.confirmation.total,
-                            ),
+                            text =
+                                stringResource(
+                                    R.string.checkout_price,
+                                    uiState.confirmation.total,
+                                ),
                         )
                     }
                 }
                 is CheckoutUiState.Idle -> {
                     CheckoutContentIdle(
                         uiState = uiState,
-                        onAction = onAction
+                        onAction = onAction,
                     )
                 }
             }
@@ -137,10 +143,11 @@ fun CheckoutContentIdle(
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
     ) {
         Text(
             text = stringResource(R.string.checkout_total, uiState.summary.finalTotal),
@@ -151,21 +158,21 @@ fun CheckoutContentIdle(
             onValueChange = { onAction(CheckoutAction.ChangeName(it)) },
             label = { Text(text = stringResource(R.string.checkout_name_label)) },
             isError = uiState.errors.nameError != null,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = uiState.form.address,
             onValueChange = { onAction(CheckoutAction.ChangeAddress(it)) },
             label = { Text(text = stringResource(R.string.checkout_address_label)) },
             isError = uiState.errors.addressError != null,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = uiState.form.email,
             onValueChange = { onAction(CheckoutAction.ChangeEmail(it)) },
             label = { Text(text = stringResource(R.string.checkout_email_label)) },
             isError = uiState.errors.emailError != null,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         if (uiState.isCartEmpty) {
@@ -175,7 +182,7 @@ fun CheckoutContentIdle(
         Button(
             onClick = { onAction(CheckoutAction.Confirm) },
             enabled = uiState.canSubmit,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
                 text =
