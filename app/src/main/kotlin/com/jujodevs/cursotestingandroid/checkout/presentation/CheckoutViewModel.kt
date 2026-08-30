@@ -25,7 +25,7 @@ class CheckoutViewModel
     constructor(
         private val placeOrderUseCase: PlaceOrderUseCase,
         getCartSummaryUseCase: GetCartSummaryUseCase,
-        isCartEmptyUseCase: IsCartEmptyUseCase,
+        private val isCartEmptyUseCase: IsCartEmptyUseCase,
     ) : ViewModel() {
         private val formState = MutableStateFlow(CheckoutForm())
 
@@ -103,6 +103,8 @@ class CheckoutViewModel
             if (!formState.value.validate().isValid) return
 
             viewModelScope.launch {
+                if (isCartEmptyUseCase()) return@launch
+
                 submission.update { Submission.Submitting }
                 placeOrderUseCase()
                     .onSuccess { orderConfirmation ->
