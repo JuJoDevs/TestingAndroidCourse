@@ -23,4 +23,6 @@ sealed interface CartAction {
         val productId: String,
         val currentQuantity: Int,
     ) : CartAction
+
+    data object NavigateToCheckout : CartAction
 }

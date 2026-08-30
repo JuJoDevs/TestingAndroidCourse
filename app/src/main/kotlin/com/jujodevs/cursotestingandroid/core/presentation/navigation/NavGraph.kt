@@ -13,6 +13,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.jujodevs.cursotestingandroid.cart.presentation.CartScreen
+import com.jujodevs.cursotestingandroid.checkout.presentation.CheckoutScreen
 import com.jujodevs.cursotestingandroid.detail.presentation.ProductDetailScreen
 import com.jujodevs.cursotestingandroid.productlist.presentation.ProductListScreen
 import com.jujodevs.cursotestingandroid.settings.presentation.SettingsScreen
@@ -32,6 +33,7 @@ fun NavGraph() {
             entry<Screen.Cart> {
                 CartScreen(
                     onBack = { backStack.removeLastOrNull() },
+                    navigateToCheckout = { backStack.add(Screen.Checkout) },
                 )
             }
             entry<Screen.Settings> {
@@ -42,6 +44,11 @@ fun NavGraph() {
             entry<Screen.ProductDetail> { route ->
                 ProductDetailScreen(
                     productId = route.productId,
+                    onBack = { backStack.removeLastOrNull() },
+                )
+            }
+            entry<Screen.Checkout> {
+                CheckoutScreen(
                     onBack = { backStack.removeLastOrNull() },
                 )
             }

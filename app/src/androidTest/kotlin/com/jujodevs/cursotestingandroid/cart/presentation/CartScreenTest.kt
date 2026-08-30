@@ -112,9 +112,28 @@ class CartScreenTest : ComposeTest() {
             onNodeWithText(getString(R.string.cart_summary_subtotal)).assertIsDisplayed()
             onNodeWithText(getString(R.string.cart_summary_discount)).assertIsDisplayed()
             onNodeWithText(getString(R.string.cart_summary_total)).assertIsDisplayed()
+            onNodeWithText(getString(R.string.cart_checkout)).assertIsDisplayed()
 
             onNodeWithTag(cartItem(coffee.id)).assertIsDisplayed()
             onNodeWithTag(cartItem(bread.id)).assertIsDisplayed()
+        }
+
+    @Test
+    fun givenSuccessState_whenCheckoutClicked_thenEmitsNavigateToCheckoutAction() =
+        withComposeRule {
+            var navigateToCheckoutClicked = false
+            createCartScreen(
+                uiState = cartSuccess,
+                onAction = { action ->
+                    if (action is CartAction.NavigateToCheckout) {
+                        navigateToCheckoutClicked = true
+                    }
+                },
+            )
+
+            onNodeWithText(getString(R.string.cart_checkout)).performClick()
+
+            assertTrue(navigateToCheckoutClicked)
         }
 
     @Test

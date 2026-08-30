@@ -42,6 +42,7 @@
     <string name="cart_empty_icon">🛒</string>
     <string name="cart_empty_title">Tu carrito está vacío</string>
     <string name="cart_empty_subtitle">Agrega productos para comenzar</string>
+    <string name="cart_checkout">Finalizar compra</string>
     <string name="cart_delete_content_description">Eliminar producto</string>
     <string name="cart_item_unit_price">%s c/u</string>
     <string name="cart_item_total_price">Total: %s</string>
@@ -64,4 +65,17 @@
     <string name="product_detail_stock_units">%d unidades</string>
     <string name="product_detail_no_stock">Sin stock</string>
     <string name="product_detail_no_stock_available">Sin stock disponible</string>
+
+    <string name="checkout_title">Checkout</string>
+    <string name="checkout_retry">Reintentar</string>
+    <string name="checkout_order_confirmed">Pedido confirmado: %s</string>
+    <string name="checkout_estimated_time">Tiempo estimado: %s</string>
+    <string name="checkout_price">Precio: %s</string>
+    <string name="checkout_total">Total: %s</string>
+    <string name="checkout_name_label">Nombre</string>
+    <string name="checkout_address_label">Dirección</string>
+    <string name="checkout_email_label">Email</string>
+    <string name="checkout_empty_cart">Tu carrito está vacío</string>
+    <string name="checkout_processing_payment">Procesando el pago</string>
+    <string name="checkout_confirm_order">Confirmar pedido</string>
 </resources>

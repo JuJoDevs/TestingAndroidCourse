@@ -1,5 +1,6 @@
 package com.jujodevs.cursotestingandroid.productlist.data.remote
 
+import com.jujodevs.cursotestingandroid.checkout.data.remote.response.OrderConfirmationResponse
 import com.jujodevs.cursotestingandroid.core.domain.model.AppError
 import com.jujodevs.cursotestingandroid.productlist.data.remote.response.ProductResponse
 import com.jujodevs.cursotestingandroid.productlist.data.remote.response.PromotionResponse
@@ -16,19 +17,16 @@ class RemoteDataSource
         private val miniMarketApiService: MiniMarketApiService,
     ) {
         suspend fun getProducts(): Result<List<ProductResponse>> =
-            try {
-                val response = miniMarketApiService.getProducts()
-                Result.success(response.products)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Result.failure(mapToDomainError(e))
-            }
+            safeCall { miniMarketApiService.getProducts().products }
 
         suspend fun getPromotions(): Result<List<PromotionResponse>> =
+            safeCall { miniMarketApiService.getPromotions().promotions }
+
+        suspend fun placeOrder(): Result<OrderConfirmationResponse> = safeCall { miniMarketApiService.placeOrder() }
+
+        private suspend fun <T> safeCall(call: suspend () -> T): Result<T> =
             try {
-                val response = miniMarketApiService.getPromotions()
-                Result.success(response.promotions)
+                Result.success(call())
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
